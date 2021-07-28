@@ -15,6 +15,7 @@ public class DataMiners extends Application {
 	PartyMember co = new PartyMember("CO", 5, 5, 5, 25, "Fire!", "Cover!", "Capture!");
 	PartyMember mars = new PartyMember("Mars", 8, 6, 3, 20, "Slash", "War Cry", "Scale");
 	PartyMember ascii = new PartyMember("ASCII", 10, 8, 1, 18, "Attack Enemy", "Use Shield", "Go There");
+	PartyMember professormoney = new PartyMember("ProfessorMoney", 1, 1, 3, 30, "Coin Cannon", "Make it Rain", "First Class");
 	PartyMember p1 = caulder;
 	PartyMember p2 = co;
 	PartyMember p3 = mars;
@@ -26,9 +27,11 @@ public class DataMiners extends Application {
 		
 		MenuBar menuBar = new MenuBar();
 
-		Menu menuTabs = new Menu("Tabs");
+		Menu menuTabs = new Menu("Party");
 		menuBar.getMenus().addAll(menuTabs);
-		
+
+		//items box
+		/*		
 		MenuItem menuItemOther = new MenuItem("Items");
 		menuTabs.getItems().add(menuItemOther);
 
@@ -36,7 +39,6 @@ public class DataMiners extends Application {
 			GridPane gp2 = new GridPane();
 			
 			Label itemText = new Label("apple");
-			
 			gp2.add(itemText,0,0);
 			
 			Scene scene2 = new Scene(gp2,306,100);
@@ -47,23 +49,24 @@ public class DataMiners extends Application {
 			
 			newWindow.show();
 		});
+		*/
 		
-		MenuItem menuItemP1 = new MenuItem("Party Member 1");
+		MenuItem menuItemP1 = new MenuItem("Party Member Slot 1");
 		menuTabs.getItems().add(menuItemP1);
 		
 		menuItemP1.setOnAction(e -> partyWindow(p1));
 		
-		MenuItem menuItemP2 = new MenuItem("Party Member 2");
+		MenuItem menuItemP2 = new MenuItem("Party Member Slot 2");
 		menuTabs.getItems().add(menuItemP2);
 		
 		menuItemP2.setOnAction(e -> partyWindow(p2));
 		
-		MenuItem menuItemP3 = new MenuItem("Party Member 3");
+		MenuItem menuItemP3 = new MenuItem("Party Member Slot 3");
 		menuTabs.getItems().add(menuItemP3);
 		
 		menuItemP3.setOnAction(e -> partyWindow(p3));
 		
-		MenuItem menuItemP4 = new MenuItem("Party Member 4");
+		MenuItem menuItemP4 = new MenuItem("Party Member Slot 4");
 		menuTabs.getItems().add(menuItemP4);
 		
 		menuItemP4.setOnAction(e -> partyWindow(p4));
