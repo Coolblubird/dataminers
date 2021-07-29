@@ -7,69 +7,100 @@ import javafx.scene.paint.*;
 import javafx.stage.Stage;
 import javafx.geometry.*;
 import javafx.scene.image.*;
+import java.util.*;
 
 
 public class DataMiners extends Application {   
 	//starting characters, name, atk, def, explor, hp, dmg attack, support atk, exploration atk
+	PartyMember[] pTable = new PartyMember[4];
+	ArrayList<PartyMember> charUnlocked = new ArrayList<PartyMember>();
 	PartyMember caulder = new PartyMember("Caulder", 3, 5, 10, 20, "Endure", "Heal", "Map");
 	PartyMember co = new PartyMember("CO", 5, 5, 5, 25, "Fire!", "Cover!", "Capture!");
 	PartyMember mars = new PartyMember("Mars", 8, 6, 3, 20, "Slash", "War Cry", "Scale");
-	PartyMember ascii = new PartyMember("ASCII", 10, 8, 1, 18, "Attack Enemy", "Use Shield", "Go There");
-	PartyMember professormoney = new PartyMember("ProfessorMoney", 1, 1, 3, 30, "Coin Cannon", "Make it Rain", "First Class");
-	PartyMember p1 = caulder;
-	PartyMember p2 = co;
-	PartyMember p3 = mars;
-	PartyMember p4 = ascii;
+	PartyMember ascii = new PartyMember("ASCII", 10, 2, 1, 20, "Use Sword", "Use Shield", "Go There");
+	ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
+	
 	
 	@Override // Override the start method in the Application class
 	public void start(Stage primaryStage) {  
+		pTable[0] = caulder;
+		pTable[1] = co;
+		pTable[2] = mars;
+		pTable[3] = ascii;
+		itemsOnPerson.add(new Item("HealingPotion",false,1,10));
+		
 		TabPane tabPane = new TabPane();	
 		
 		MenuBar menuBar = new MenuBar();
 
-		Menu menuTabs = new Menu("Party");
-		menuBar.getMenus().addAll(menuTabs);
+		Menu menuParty = new Menu("Party");
+		Menu menuItems = new Menu("Items");
+		menuBar.getMenus().addAll(menuParty,menuItems);
 
-		//items box
-		/*		
+		//items tab
+		MenuItem menuItemUseFirst = new MenuItem("Use First Item");
+		menuItems.getItems().add(menuItemUseFirst);
+
+		menuItemUseFirst.setOnAction(e -> {
+			//use the first usable item in the players inventory
+		});
+		
 		MenuItem menuItemOther = new MenuItem("Items");
-		menuTabs.getItems().add(menuItemOther);
+		menuItems.getItems().add(menuItemOther);
 
 		menuItemOther.setOnAction(e -> {
-			GridPane gp2 = new GridPane();
+			GridPane gpI = new GridPane();
 			
-			Label itemText = new Label("apple");
-			gp2.add(itemText,0,0);
+			int row = 0;
 			
-			Scene scene2 = new Scene(gp2,306,100);
+			for (int i=0; i<itemsOnPerson.size(); i++){
+				Label itemText = new Label(itemsOnPerson.get(i).name);
+				ImageView itemImage = new ImageView(itemsOnPerson.get(i).itemSpr);
+				
+				
+				if (i % 5 == 0 && i > 0){
+					row+=2;
+					gpI.add(itemImage,i%5,row);
+					gpI.add(itemText,i%5,row+1);
+				}
+				else{
+					gpI.add(itemImage,i%5,row);
+					gpI.add(itemText,i%5,row+1);
+				}
+			}
+			gpI.setPadding(new Insets(10, 10, 10, 10));
+			
+			Scene sceneI = new Scene(gpI,496,480);
 			
 			Stage newWindow = new Stage();
-			newWindow.setTitle("Tax");
-			newWindow.setScene(scene2);
-			
+			newWindow.setTitle("Items");
+			newWindow.setResizable(false);
+			newWindow.setScene(sceneI);
 			newWindow.show();
 		});
-		*/
 		
+		//party tab
 		MenuItem menuItemP1 = new MenuItem("Party Member Slot 1");
-		menuTabs.getItems().add(menuItemP1);
+		menuParty.getItems().add(menuItemP1);
 		
-		menuItemP1.setOnAction(e -> partyWindow(p1));
+		menuItemP1.setOnAction(e -> partyWindow(pTable[0]));
 		
 		MenuItem menuItemP2 = new MenuItem("Party Member Slot 2");
-		menuTabs.getItems().add(menuItemP2);
+		menuParty.getItems().add(menuItemP2);
 		
-		menuItemP2.setOnAction(e -> partyWindow(p2));
+		menuItemP2.setOnAction(e -> partyWindow(pTable[1]));
 		
 		MenuItem menuItemP3 = new MenuItem("Party Member Slot 3");
-		menuTabs.getItems().add(menuItemP3);
+		menuParty.getItems().add(menuItemP3);
 		
-		menuItemP3.setOnAction(e -> partyWindow(p3));
-		
+		menuItemP3.setOnAction(e -> partyWindow(pTable[2]));
+				
 		MenuItem menuItemP4 = new MenuItem("Party Member Slot 4");
-		menuTabs.getItems().add(menuItemP4);
+		menuParty.getItems().add(menuItemP4);
 		
-		menuItemP4.setOnAction(e -> partyWindow(p4));
+		menuItemP4.setOnAction(e -> partyWindow(pTable[3]));
+		
+		Button btnStart = new Button("Start");
 		
 		VBox vbox = new VBox();
 		vbox.getChildren().addAll(menuBar);
@@ -112,9 +143,9 @@ public class DataMiners extends Application {
 			System.out.println("Ow!");
 		});
 		
-		ImageView p1FacePlate = new ImageView(p.getFP());
+		ImageView pFacePlate = new ImageView(p.getFP());
 		
-		gp2.add(p1FacePlate,0,0);
+		gp2.add(pFacePlate,0,0);
 		gp2.add(bA1,1,2);
 		gp2.add(bA2,1,3);
 		gp2.add(bA3,1,4);
