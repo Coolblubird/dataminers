@@ -19,7 +19,10 @@ public class DataMiners extends Application {
 	PartyMember mars = new PartyMember("Mars", 8, 6, 3, 20, "Slash", "War Cry", "Scale");
 	PartyMember ascii = new PartyMember("ASCII", 10, 2, 1, 20, "Use Sword", "Use Shield", "Go There");
 	ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
-	
+	String mode = "menu";
+	MenuBar menuBarCombat = new MenuBar();
+	GridPane town = new GridPane();
+	VBox vbox = new VBox();
 	
 	@Override // Override the start method in the Application class
 	public void start(Stage primaryStage) {  
@@ -27,15 +30,17 @@ public class DataMiners extends Application {
 		pTable[1] = co;
 		pTable[2] = mars;
 		pTable[3] = ascii;
+		charUnlocked.add(caulder);
+		charUnlocked.add(co);
+		charUnlocked.add(mars);
+		charUnlocked.add(ascii);
 		itemsOnPerson.add(new Item("HealingPotion",false,1,10));
 		
-		TabPane tabPane = new TabPane();	
 		
-		MenuBar menuBar = new MenuBar();
-
+		//-----------------COMBAT------------------
 		Menu menuParty = new Menu("Party");
 		Menu menuItems = new Menu("Items");
-		menuBar.getMenus().addAll(menuParty,menuItems);
+		menuBarCombat.getMenus().addAll(menuParty,menuItems);
 
 		//items tab
 		MenuItem menuItemUseFirst = new MenuItem("Use First Item");
@@ -69,6 +74,7 @@ public class DataMiners extends Application {
 				}
 			}
 			gpI.setPadding(new Insets(10, 10, 10, 10));
+			gpI.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 			
 			Scene sceneI = new Scene(gpI,496,480);
 			
@@ -100,12 +106,22 @@ public class DataMiners extends Application {
 		
 		menuItemP4.setOnAction(e -> partyWindow(pTable[3]));
 		
+		//-------------------MAP----------------------
+		
+		//-------------------INTRO SCENE--------------
+		
+		//-------------------TITLE--------------------
+		ImageView menulogo = new ImageView(new Image("/images/menulogo.png"));
+		
 		Button btnStart = new Button("Start");
+		btnStart.setOnAction(e -> modeMachine("intro"));
 		
-		VBox vbox = new VBox();
-		vbox.getChildren().addAll(menuBar);
+		vbox.getChildren().addAll(menulogo,btnStart);
 		
-		Scene scene = new Scene(vbox, 350, 300);  
+		vbox.setBackground(new Background(new BackgroundFill(Color.HONEYDEW, CornerRadii.EMPTY, Insets.EMPTY)));
+		vbox.setAlignment(Pos.TOP_CENTER);
+		
+		Scene scene = new Scene(vbox, 350, 340);  
 		primaryStage.setTitle("DataMiners"); // Set the window title
 		primaryStage.setResizable(false); // bah screw resizing!
 		primaryStage.setScene(scene); // Place the scene in the window
@@ -120,7 +136,22 @@ public class DataMiners extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
-
+	
+	public void modeMachine(String mode){
+		vbox.getChildren().clear();
+		switch (mode) {
+			case "intro":
+				
+				break;
+			case "combat":
+				vbox.getChildren().addAll(menuBarCombat,);
+				break;
+			case "town":
+				vbox.getChildren().addAll(town);
+				break;
+		}
+	}
+	
 	public void partyWindow(PartyMember p){
 		
 		GridPane gp2 = new GridPane();
