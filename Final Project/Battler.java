@@ -41,7 +41,10 @@ class PartyMember implements Battler{
 	public void statsUp(int stat, int amount){
 		switch (stat) {
 			case 1:
-				this.chp+=amount;
+				if (this.chp+amount < this.mhp)
+					this.chp+=amount;
+				else 
+					this.chp=this.mhp;
 				break;
 			case 2:
 				this.atk+=amount;
@@ -56,7 +59,11 @@ class PartyMember implements Battler{
 	public void statsDown(int stat, int amount){
 		switch (stat) {
 			case 1:
-				this.chp-=amount;
+				if (this.chp-amount > 0)
+					this.chp-=amount;
+				else 
+					this.chp=0;
+					this.ko=true;
 				break;
 			case 2:
 				this.atk-=amount;
@@ -86,15 +93,17 @@ class Enemy implements Battler{
 	int atk;
 	int def;
 	int chp;
+	int mhp;
 	Image btleSpr;
 	boolean ko = false;
 	
-	Enemy(String newName, int newAtk, int newDef,int newCHP){
+	Enemy(String newName, int newAtk, int newDef,int newMHP){
 		this.name = newName;
 		this.fileName = newName.toLowerCase().trim();
 		this.atk = newAtk;
 		this.def = newDef;
-		this.chp = newCHP;
+		this.mhp = newMHP;
+		this.chp = newMHP;
 		this.btleSpr = new Image("/images/enemies/" + this.fileName + ".PNG");
 	}
 	
@@ -102,7 +111,10 @@ class Enemy implements Battler{
 	public void statsUp(int stat, int amount){
 		switch (stat) {
 			case 1:
-				this.chp+=amount;
+				if (this.chp+amount < this.mhp)
+					this.chp+=amount;
+				else 
+					this.chp=this.mhp;
 				break;
 			case 2:
 				this.atk+=amount;
@@ -117,7 +129,11 @@ class Enemy implements Battler{
 	public void statsDown(int stat, int amount){
 		switch (stat) {
 			case 1:
-				this.chp-=amount;
+				if (this.chp-amount > 0)
+					this.chp-=amount;
+				else 
+					this.chp=0;
+					this.ko=true;
 				break;
 			case 2:
 				this.atk-=amount;

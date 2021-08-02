@@ -26,7 +26,7 @@ import java.util.*;
 		-COMBAT STARTING
 	-COMBAT:
 		-SPRITES FOR ENEMIES (10/20)
-		-SPRITES FOR CHARACTERS (5/20)
+		-SPRITES FOR CHARACTERS (6/20)
 		-TEXT FOR HOW COMBAT IS GOING
 		-ABILITY INTERACTION
 	-STORY:
@@ -35,7 +35,7 @@ import java.util.*;
 
 public class DataMiners extends Application {   
 	//starting characters, name, atk, def, explor, hp, dmg attack, support atk, exploration atk
-	PartyMember[] pTable = new PartyMember[4];
+	static PartyMember[] pTable = new PartyMember[4];
 	ArrayList<PartyMember> charUnlocked = new ArrayList<PartyMember>();
 	PartyMember caulder = new PartyMember("Caulder", 3, 5, 10, 20, "Endure", "Heal", "Map");
 	PartyMember co = new PartyMember("CO", 5, 5, 5, 25, "Fire!", "Cover!", "Capture!");
@@ -78,41 +78,13 @@ public class DataMiners extends Application {
 
 		menuItemUseFirst.setOnAction(e -> {
 			//use the first usable item in the players inventory
-		});
-		
-		MenuItem menuItemOther = new MenuItem("Items");
-		menuItems.getItems().add(menuItemOther);
-
-		menuItemOther.setOnAction(e -> {
-			GridPane gpI = new GridPane();
-			
-			int row = 0;
-			
 			for (int i=0; i<itemsOnPerson.size(); i++){
-				Label itemText = new Label(itemsOnPerson.get(i).name);
-				ImageView itemImage = new ImageView(itemsOnPerson.get(i).itemSpr);
-				
-				
-				if (i % 5 == 0 && i > 0){
-					row+=2;
-					gpI.add(itemImage,i%5,row);
-					gpI.add(itemText,i%5,row+1);
-				}
-				else{
-					gpI.add(itemImage,i%5,row);
-					gpI.add(itemText,i%5,row+1);
+				if (itemsOnPerson.get(i).isKey == false){
+					//USE THE ITEM
+					Item.useItem(itemsOnPerson.get(i));
+					break;
 				}
 			}
-			gpI.setPadding(new Insets(10, 10, 10, 10));
-			gpI.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
-			
-			Scene sceneI = new Scene(gpI,496,480);
-			
-			Stage newWindow = new Stage();
-			newWindow.setTitle("Items");
-			newWindow.setResizable(false);
-			newWindow.setScene(sceneI);
-			newWindow.show();
 		});
 		
 		//party tab
@@ -138,6 +110,14 @@ public class DataMiners extends Application {
 		
 		//-------------------MAP----------------------
 		
+		//-------------------EXTRAS TAB---------------
+		MenuItem menuItemItems = new MenuItem("Items");
+		menuItems.getItems().add(menuItemItems);
+
+		menuItemItems.setOnAction(e -> itemWindow());
+		
+		//-------------------TOWN---------------------
+		
 		//-------------------INTRO SCENE--------------
 		btnIntro.setOnAction(e -> {
 			advanceText();
@@ -150,6 +130,8 @@ public class DataMiners extends Application {
 		Button btnStart = new Button("Start");
 		btnStart.setOnAction(e -> modeMachine());
 		
+		
+		//Start program
 		vbox.getChildren().addAll(menulogo,btnStart);
 		
 		vbox.setBackground(new Background(new BackgroundFill(Color.HONEYDEW, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -194,19 +176,19 @@ public class DataMiners extends Application {
 		Button bA1 = new Button(p.atk1);
 		
 		bA1.setOnAction(b -> {
-			System.out.println(bA1.getText());
+			registerButton(p.atk1);
 		});
 		
 		Button bA2 = new Button(p.atk2);
 		
 		bA2.setOnAction(b -> {
-			System.out.println("Oof!");
+			registerButton(p.atk2);
 		});
 		
 		Button bA3 = new Button(p.atk3);
 		
 		bA3.setOnAction(b -> {
-			System.out.println("Ow!");
+			registerButton(p.atk3);	
 		});
 		
 		ImageView pFacePlate = new ImageView(p.getFP());
@@ -287,6 +269,7 @@ public class DataMiners extends Application {
 				textForCutscene1.setText("(Elsewhere... ");
 				textForCutscene2.setText("Inside of your computer...)");
 				textForCutscene3.setText("");
+				vbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCYAN, CornerRadii.EMPTY, Insets.EMPTY)));
 				picForCutscene = new ImageView(new Image("/images/cutscenes/black.png"));
 				break;
 			case 9:
@@ -339,6 +322,39 @@ public class DataMiners extends Application {
 			case 17:
 				mode = "town";
 		}
+	}
+	
+	public void itemWindow(){
+		GridPane gpI = new GridPane();
+		
+		int row = 0;
+		
+		for (int i=0; i<itemsOnPerson.size(); i++){
+			Item item = itemsOnPerson.get(i);
+			Label itemText = new Label(itemsOnPerson.get(i).name);
+			ImageView itemImage = new ImageView(itemsOnPerson.get(i).itemSpr);
+			itemImage.setOnMousePressed(a -> Item.useItem(item));
+			
+			if (i % 5 == 0 && i > 0){
+				row+=2;
+				gpI.add(itemImage,i%5,row);
+				gpI.add(itemText,i%5,row+1);
+			}
+			else{
+				gpI.add(itemImage,i%5,row);
+				gpI.add(itemText,i%5,row+1);
+			}
+		}
+		gpI.setPadding(new Insets(10, 10, 10, 10));
+		gpI.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+		
+		Scene sceneI = new Scene(gpI,496,480);
+		
+		Stage newWindow = new Stage();
+		newWindow.setTitle("Items");
+		newWindow.setResizable(false);
+		newWindow.setScene(sceneI);
+		newWindow.show();
 	}
 }
 

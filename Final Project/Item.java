@@ -1,5 +1,13 @@
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.TabPane.TabClosingPolicy;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.stage.Stage;
+import javafx.geometry.*;
+import javafx.scene.image.*;
 import java.util.*;
-import javafx.scene.image.Image;
 
 public class Item {
 	String name;
@@ -13,8 +21,57 @@ public class Item {
 		this.name = newName;
 		this.fileName = newName.toLowerCase().trim();
 		this.isKey = isItKey;
-		this.stat = newStat;
-		this.statAmount = newStatAmount;
+		if (isKey==false){
+			this.stat = newStat;
+			this.statAmount = newStatAmount;
+		}
 		this.itemSpr = new Image("/images/items/" + this.fileName + ".PNG");
+	}
+	
+	//use the item
+	static void useItem(Item item){
+		if (item.isKey==false){
+			GridPane gpItem = new GridPane();
+			Stage itemWindow = new Stage();
+			
+			Button btnP1 = new Button(DataMiners.pTable[0].name);
+			Button btnP2 = new Button(DataMiners.pTable[1].name);
+			Button btnP3 = new Button(DataMiners.pTable[2].name);
+			Button btnP4 = new Button(DataMiners.pTable[3].name);
+			
+			btnP1.setOnAction(e -> {
+				DataMiners.pTable[0].statsUp(item.stat,item.statAmount);
+				itemWindow.close();
+			});
+			btnP2.setOnAction(e -> {
+				DataMiners.pTable[1].statsUp(item.stat,item.statAmount);
+				itemWindow.close();
+			});
+			btnP3.setOnAction(e -> {
+				DataMiners.pTable[2].statsUp(item.stat,item.statAmount);
+				itemWindow.close();
+			});
+			btnP4.setOnAction(e -> {
+				DataMiners.pTable[3].statsUp(item.stat,item.statAmount);
+				itemWindow.close();
+			});
+			
+			gpItem.add(new Label("On which Party Member?"),0,0);
+			gpItem.add(btnP1,0,1);
+			gpItem.add(btnP2,0,2);
+			gpItem.add(btnP3,0,3);
+			gpItem.add(btnP4,0,4);
+			
+			gpItem.setPadding(new Insets(10, 10, 10, 10));
+			gpItem.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
+			
+			Scene sceneI = new Scene(gpItem,496,480);
+			
+			itemWindow.setTitle("Items");
+			itemWindow.setResizable(false);
+			itemWindow.setAlwaysOnTop(true);
+			itemWindow.setScene(sceneI);
+			itemWindow.show();
+		}
 	}
 }
