@@ -1,6 +1,7 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.text.*;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
@@ -44,9 +45,10 @@ public class DataMiners extends Application {
 	PartyMember ascii = new PartyMember("ASCII", 10, 2, 1, 20, "Use Sword", "Use Shield", "Go There");
 	ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
 	String mode = "intro";
-	String cTown = "gpc";
-	String cTownName = "GPC";
+	String cTown = "gpu";
+	String cTownName = "GPU";
 	MenuBar menuBarCombat = new MenuBar();
+	MenuBar menuBarTown = new MenuBar();
 	GridPane town = new GridPane();
 	VBox vbox = new VBox();
 	Label textForCutscene1 = new Label("This, is a computer. ");
@@ -63,20 +65,24 @@ public class DataMiners extends Application {
 	@Override // Override the start method in the Application class
 	public void start(Stage primaryStage) {  
 		pTable[0] = caulder;
-		pTable[1] = co;
-		pTable[2] = mars;
-		pTable[3] = ascii;
 		charUnlocked.add(caulder);
-		charUnlocked.add(co);
-		charUnlocked.add(mars);
-		charUnlocked.add(ascii);
 		itemsOnPerson.add(new Item("HealingPotion",false,1,10));
 		
 		
 		//-----------------COMBAT------------------
 		Menu menuParty = new Menu("Party");
 		Menu menuItems = new Menu("Items");
+		Menu menuOther = new Menu("Other Tab");
+		Menu menuAbout = new Menu("About");
+		MenuItem menuItemOther = new MenuItem("Open Others Tab");
+		MenuItem menuItemAbout = new MenuItem("About this Game");
+		menuItemOther.setOnAction(e -> otherWindow());
+		menuItemAbout.setOnAction(e-> aboutWindow());
+		menuOther.getItems().add(menuItemOther);
+		menuAbout.getItems().add(menuItemAbout);
+		
 		menuBarCombat.getMenus().addAll(menuParty,menuItems);
+		menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
 
 		//items tab
 		MenuItem menuItemUseFirst = new MenuItem("Use First Item");
@@ -136,12 +142,18 @@ public class DataMiners extends Application {
 			modeMachine();
 		});
 		
+		Label townName = new Label(cTownName);
+		townName.setFont(new Font(20.0));
+		
 		town.add(picForTown,0,0);
 		town.add(new Label("Where to, sir?"),0,1);
-		town.add(new Label(cTownName),1,0);
+		town.add(townName,1,0);
 		town.add(btnVisit,1,1);
 		town.add(btnShop,1,2);
 		town.add(btnMap,1,3);
+		town.setPadding(new Insets(5, 10, 10, 10));
+		town.setVgap(4);
+		town.setHgap(4);
 		
 		//-------------------INTRO SCENE--------------
 		btnIntro.setOnAction(e -> {
@@ -187,57 +199,15 @@ public class DataMiners extends Application {
 			case "combat":
 				vbox.getChildren().addAll(menuBarCombat);
 				break;
-			case "town":
+			case "town":		
+				vbox.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
 				picForTown = new ImageView(new Image("/images/locations/" + cTown + ".png"));
-				vbox.getChildren().addAll(town);
+				vbox.getChildren().addAll(menuBarTown,town);
 				break;
 		}
 	}
 	
 	
-	public void partyWindow(PartyMember p){
-		GridPane gp2 = new GridPane();
-		
-		Button bA1 = new Button(p.atk1);
-		
-		bA1.setOnAction(b -> {
-			registerButton(p.atk1);
-		});
-		
-		Button bA2 = new Button(p.atk2);
-		
-		bA2.setOnAction(b -> {
-			registerButton(p.atk2);
-		});
-		
-		Button bA3 = new Button(p.atk3);
-		
-		bA3.setOnAction(b -> {
-			registerButton(p.atk3);	
-		});
-		
-		ImageView pFacePlate = new ImageView(p.getFP());
-		
-		gp2.add(pFacePlate,0,0);
-		gp2.add(bA1,1,2);
-		gp2.add(bA2,1,3);
-		gp2.add(bA3,1,4);
-		gp2.add(new Label("HP: \t" + p.chp + "/" + p.mhp),0,1);
-		gp2.add(new Label("ATK: \t" + p.atk),0,2);
-		gp2.add(new Label("DEF: \t" + p.def),0,3);
-		gp2.add(new Label("Explr: \t" + p.explr),0,4);
-		gp2.setVgap(10);
-		gp2.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-		gp2.setPadding(new Insets(10, 10, 10, 10));
-		
-		Scene scene2 = new Scene(gp2,230,300);
-		
-		Stage newWindow = new Stage();
-		newWindow.setTitle(p.name);
-		newWindow.setScene(scene2);
-		newWindow.setResizable(false);
-		newWindow.show();
-	}
 	
 	void registerButton(String ability){
 		switch (mode) {
@@ -336,7 +306,7 @@ public class DataMiners extends Application {
 				break;
 			case 14:
 				textForCutscene1.setText("There's a meeting going on");
-				textForCutscene2.setText("at the Graphics Processing Center.");
+				textForCutscene2.setText("at the GPU's Center.");
 				textForCutscene3.setText("Everyone is welcome.");
 				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-4.png"));
 				break;
@@ -386,6 +356,81 @@ public class DataMiners extends Application {
 		newWindow.setTitle("Items");
 		newWindow.setResizable(false);
 		newWindow.setScene(sceneI);
+		newWindow.show();
+	}
+	
+	public void partyWindow(PartyMember p){
+		GridPane gp2 = new GridPane();
+		
+		Button bA1 = new Button(p.atk1);
+		
+		bA1.setOnAction(b -> {
+			registerButton(p.atk1);
+		});
+		
+		Button bA2 = new Button(p.atk2);
+		
+		bA2.setOnAction(b -> {
+			registerButton(p.atk2);
+		});
+		
+		Button bA3 = new Button(p.atk3);
+		
+		bA3.setOnAction(b -> {
+			registerButton(p.atk3);	
+		});
+		
+		ImageView pFacePlate = new ImageView(p.getFP());
+		
+		gp2.add(pFacePlate,0,0);
+		gp2.add(bA1,1,2);
+		gp2.add(bA2,1,3);
+		gp2.add(bA3,1,4);
+		gp2.add(new Label("HP: \t" + p.chp + "/" + p.mhp),0,1);
+		gp2.add(new Label("ATK: \t" + p.atk),0,2);
+		gp2.add(new Label("DEF: \t" + p.def),0,3);
+		gp2.add(new Label("Explr: \t" + p.explr),0,4);
+		gp2.setVgap(10);
+		gp2.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+		gp2.setPadding(new Insets(10, 10, 10, 10));
+		
+		Scene scene2 = new Scene(gp2,230,300);
+		
+		Stage newWindow = new Stage();
+		newWindow.setTitle(p.name);
+		newWindow.setScene(scene2);
+		newWindow.setResizable(false);
+		newWindow.show();
+	}
+	
+	public void otherWindow(){
+		GridPane gpI = new GridPane();
+		
+		gpI.setPadding(new Insets(10, 10, 10, 10));
+		gpI.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+		
+		Scene sceneI = new Scene(gpI,496,480);
+		Stage newWindow = new Stage();
+		newWindow.setTitle("Items");
+		newWindow.setResizable(false);
+		newWindow.setScene(sceneI);
+		newWindow.show();
+	}
+	
+	public void aboutWindow(){
+		GridPane gpA = new GridPane();
+		
+		gpA.add(new Label("Jordan Ashe"),0,0);
+		gpA.add(new Label("X-X-21"),0,1);
+		
+		gpA.setPadding(new Insets(10, 10, 10, 10));
+		gpA.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+		
+		Scene sceneA = new Scene(gpA,100,80);
+		Stage newWindow = new Stage();
+		newWindow.setTitle("About");
+		newWindow.setResizable(false);
+		newWindow.setScene(sceneA);
 		newWindow.show();
 	}
 }
