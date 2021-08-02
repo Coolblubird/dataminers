@@ -27,6 +27,7 @@ import java.util.*;
 	-COMBAT:
 		-SPRITES FOR ENEMIES (10/20)
 		-SPRITES FOR CHARACTERS (6/20)
+		-ITEM FUNCIONALITY
 		-TEXT FOR HOW COMBAT IS GOING
 		-ABILITY INTERACTION
 	-STORY:
@@ -44,6 +45,7 @@ public class DataMiners extends Application {
 	ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
 	String mode = "intro";
 	String cTown = "gpc";
+	String cTownName = "GPC";
 	MenuBar menuBarCombat = new MenuBar();
 	GridPane town = new GridPane();
 	VBox vbox = new VBox();
@@ -51,7 +53,11 @@ public class DataMiners extends Application {
 	Label textForCutscene2 = new Label("It may be exactly like yours, or it may not.");
 	Label textForCutscene3 = new Label("");
 	ImageView picForCutscene = new ImageView(new Image("/images/cutscenes/intro-1.png"));
+	ImageView picForTown = new ImageView(new Image("/images/locations/" + cTown + ".png"));
 	Button btnIntro = new Button("Next...");
+	Button btnVisit = new Button("Visit");
+	Button btnShop = new Button("Shop");
+	Button btnMap = new Button("Map");
 	int textIntro = 0;
 	
 	@Override // Override the start method in the Application class
@@ -117,6 +123,25 @@ public class DataMiners extends Application {
 		menuItemItems.setOnAction(e -> itemWindow());
 		
 		//-------------------TOWN---------------------
+		btnVisit.setOnAction(e -> {
+			visit(cTown);
+		});
+		
+		btnShop.setOnAction(e -> {
+			shop(cTown);
+		});
+		
+		btnMap.setOnAction(e->{
+			mode="map";
+			modeMachine();
+		});
+		
+		town.add(picForTown,0,0);
+		town.add(new Label("Where to, sir?"),0,1);
+		town.add(new Label(cTownName),1,0);
+		town.add(btnVisit,1,1);
+		town.add(btnShop,1,2);
+		town.add(btnMap,1,3);
 		
 		//-------------------INTRO SCENE--------------
 		btnIntro.setOnAction(e -> {
@@ -163,6 +188,7 @@ public class DataMiners extends Application {
 				vbox.getChildren().addAll(menuBarCombat);
 				break;
 			case "town":
+				picForTown = new ImageView(new Image("/images/locations/" + cTown + ".png"));
 				vbox.getChildren().addAll(town);
 				break;
 		}
@@ -170,7 +196,6 @@ public class DataMiners extends Application {
 	
 	
 	public void partyWindow(PartyMember p){
-		
 		GridPane gp2 = new GridPane();
 		
 		Button bA1 = new Button(p.atk1);
@@ -225,6 +250,13 @@ public class DataMiners extends Application {
 		}
 	}
 	
+	void visit(String currentTown){
+		
+	}
+	
+	void shop(String currentTown){
+		
+	}
 	
 	public void advanceText(){
 		textIntro++;
@@ -331,8 +363,8 @@ public class DataMiners extends Application {
 		
 		for (int i=0; i<itemsOnPerson.size(); i++){
 			Item item = itemsOnPerson.get(i);
-			Label itemText = new Label(itemsOnPerson.get(i).name);
-			ImageView itemImage = new ImageView(itemsOnPerson.get(i).itemSpr);
+			Label itemText = new Label(item.name);
+			ImageView itemImage = new ImageView(item.itemSpr);
 			itemImage.setOnMousePressed(a -> Item.useItem(item));
 			
 			if (i % 5 == 0 && i > 0){
