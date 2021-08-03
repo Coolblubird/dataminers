@@ -56,17 +56,23 @@ public class Item {
 				itemWindow.close();
 			});
 			
-			gpItem.add(new Label("On which Party Member?"),0,0);
+			gpItem.add(new Label("Use the " + item.name + " on which Party Member?"),0,0);
 			gpItem.add(btnP1,0,1);
+			gpItem.add(new Label(DataMiners.pTable[0].chp + "/" + DataMiners.pTable[0].mhp),1,1);
 			gpItem.add(btnP2,0,2);
+			gpItem.add(new Label(DataMiners.pTable[1].chp + "/" + DataMiners.pTable[1].mhp),1,2);
 			gpItem.add(btnP3,0,3);
+			gpItem.add(new Label(DataMiners.pTable[2].chp + "/" + DataMiners.pTable[2].mhp),1,3);
 			gpItem.add(btnP4,0,4);
+			gpItem.add(new Label(DataMiners.pTable[3].chp + "/" + DataMiners.pTable[3].mhp),1,4);
 			
 			gpItem.setPadding(new Insets(10, 10, 10, 10));
 			gpItem.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
 			
-			Scene sceneI = new Scene(gpItem,496,480);
+			Scene sceneI = new Scene(gpItem,320,150);
 			
+			itemWindow.setOnCloseRequest(e -> e.consume());
+
 			itemWindow.setTitle("Items");
 			itemWindow.setResizable(false);
 			itemWindow.setAlwaysOnTop(true);

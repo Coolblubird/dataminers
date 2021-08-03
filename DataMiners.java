@@ -13,12 +13,12 @@ import java.util.*;
 /*
 	TO DO:
 	-INTRO:
-		-SPRITES
-		-TEXT
-		-TRANSITION TO FIRST TOWN
+		-SPRITES (MORE OR LESS DONE)
+		-TEXT (FIRST SCENE DONE)
+		-TRANSITION TO FIRST TOWN (DONE)
 	-TOWNS:
 		-SPRITES (3/6) (Viral Center, Motherboard, and the Storage device)
-		-TEXT (0/5)
+		-TEXT (1/5)
 		-MAP FUNCTIONALITY 
 	-MAP:
 		-SPRITES
@@ -65,6 +65,9 @@ public class DataMiners extends Application {
 	@Override // Override the start method in the Application class
 	public void start(Stage primaryStage) {  
 		pTable[0] = caulder;
+		pTable[1] = co;
+		pTable[2] = mars;
+		pTable[3] = ascii;
 		charUnlocked.add(caulder);
 		itemsOnPerson.add(new Item("HealingPotion",false,1,10));
 		
@@ -90,10 +93,14 @@ public class DataMiners extends Application {
 
 		menuItemUseFirst.setOnAction(e -> {
 			//use the first usable item in the players inventory
+			Item temp;
+			
 			for (int i=0; i<itemsOnPerson.size(); i++){
 				if (itemsOnPerson.get(i).isKey == false){
 					//USE THE ITEM
-					Item.useItem(itemsOnPerson.get(i));
+					temp = itemsOnPerson.get(i);
+					Item.useItem(temp);
+					itemsOnPerson.remove(itemsOnPerson.get(i));
 					break;
 				}
 			}
@@ -328,6 +335,7 @@ public class DataMiners extends Application {
 	
 	public void itemWindow(){
 		GridPane gpI = new GridPane();
+		Stage newWindow = new Stage();
 		
 		int row = 0;
 		
@@ -335,7 +343,12 @@ public class DataMiners extends Application {
 			Item item = itemsOnPerson.get(i);
 			Label itemText = new Label(item.name);
 			ImageView itemImage = new ImageView(item.itemSpr);
-			itemImage.setOnMousePressed(a -> Item.useItem(item));
+			itemImage.setOnMousePressed(a -> {
+				Item.useItem(item);
+				itemsOnPerson.remove(item);
+				newWindow.close();
+				itemWindow();
+			});
 			
 			if (i % 5 == 0 && i > 0){
 				row+=2;
@@ -352,7 +365,6 @@ public class DataMiners extends Application {
 		
 		Scene sceneI = new Scene(gpI,496,480);
 		
-		Stage newWindow = new Stage();
 		newWindow.setTitle("Items");
 		newWindow.setResizable(false);
 		newWindow.setScene(sceneI);
@@ -404,16 +416,24 @@ public class DataMiners extends Application {
 	}
 	
 	public void otherWindow(){
-		GridPane gpI = new GridPane();
+		VBox vbox2 = new VBox();
 		
-		gpI.setPadding(new Insets(10, 10, 10, 10));
-		gpI.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+		Tab howToPlayTab = new Tab("Manual");
+		Tab questTab = new Tab("Current Quest");
+		Tab recentTalkTab = new Tab("Recent Text");
+		Tab settingsTab = new Tab("Settings");
+		TabPane tb = new TabPane(questTab,recentTalkTab,howToPlayTab,settingsTab);
 		
-		Scene sceneI = new Scene(gpI,496,480);
+		vbox2.setPadding(new Insets(10, 10, 10, 10));
+		vbox2.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+		
+		vbox2.getChildren().addAll(tb);
+		
+		Scene sceneO = new Scene(vbox2,496,200);
 		Stage newWindow = new Stage();
-		newWindow.setTitle("Items");
+		newWindow.setTitle("Other");
 		newWindow.setResizable(false);
-		newWindow.setScene(sceneI);
+		newWindow.setScene(sceneO);
 		newWindow.show();
 	}
 	

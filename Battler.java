@@ -2,7 +2,6 @@ import java.util.*;
 import javafx.scene.image.Image;
 
 interface Battler{
-
 	void statsUp(int a, int b);
 	void statsDown(int a, int b);
 }
