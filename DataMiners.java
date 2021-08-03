@@ -61,6 +61,7 @@ public class DataMiners extends Application {
 	Button btnShop = new Button("Shop");
 	Button btnMap = new Button("Map");
 	int textIntro = 0;
+	boolean visitGPUFirst = false;
 	
 	@Override // Override the start method in the Application class
 	public void start(Stage primaryStage) {  
@@ -211,6 +212,9 @@ public class DataMiners extends Application {
 				picForTown = new ImageView(new Image("/images/locations/" + cTown + ".png"));
 				vbox.getChildren().addAll(menuBarTown,town);
 				break;
+			case "visit":
+				vbox.getChildren().addAll(picForCutscene,textForCutscene1,textForCutscene2,textForCutscene3,btnIntro);
+				break;
 		}
 	}
 	
@@ -228,7 +232,16 @@ public class DataMiners extends Application {
 	}
 	
 	void visit(String currentTown){
-		
+		switch (currentTown) {
+			case "gpu":
+				if (!visitGPUFirst){
+					textIntro=17;	
+				}
+				mode="visit";
+				advanceText();
+				modeMachine();
+				break;
+		}
 	}
 	
 	void shop(String currentTown){
@@ -330,6 +343,143 @@ public class DataMiners extends Application {
 				break;
 			case 17:
 				mode = "town";
+				break;
+			case 18:
+				textForCutscene1.setText("I've arrived. What's going on?");
+				textForCutscene2.setText("");
+				textForCutscene3.setText("");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-3.png"));
+				break;
+			case 19:
+				textForCutscene1.setText("This virus is outrageous!");
+				textForCutscene2.setText("It's torn apart my home!");
+				textForCutscene3.setText("");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-5.png"));
+				break;
+			case 20:
+				textForCutscene1.setText("Sir, we are trying our best.");
+				textForCutscene2.setText("All of our fail-safes are");
+				textForCutscene3.setText("failing badly.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-6.png"));
+				break;
+			case 21:
+				textForCutscene1.setText("For being a Commanding Officer");
+				textForCutscene2.setText("Your army sure seems to be");
+				textForCutscene3.setText("doing a poor job.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-5.png"));
+				break;
+			case 22:
+				textForCutscene1.setText("I think we just need to take");
+				textForCutscene2.setText("it chill. What can this new virus");
+				textForCutscene3.setText("do? Is it anything to worry about?");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-7.png"));
+				break;
+			case 23:
+				textForCutscene1.setText("Sir! This virus has the ability");
+				textForCutscene2.setText("to turn people into strange");
+				textForCutscene3.setText("amalgamations of code!");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-10.png"));
+				break;
+			case 24:
+				textForCutscene1.setText("I see.");
+				textForCutscene2.setText("Who is helping clear it out?");
+				textForCutscene3.setText("");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-7.png"));
+				break;
+			case 25:
+				textForCutscene1.setText("Not many, sir.");
+				textForCutscene2.setText("A lot of the important faces have");
+				textForCutscene3.setText("to keep the user interface running!");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-10.png"));
+				break;
+			case 26:
+				textForCutscene1.setText("Not good.");
+				textForCutscene2.setText("We have to get everyone to help, then.");
+				textForCutscene3.setText("All hands on deck.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-7.png"));
+				break;
+			case 27:
+				textForCutscene1.setText("I'm Caulder. I work deep down in the");
+				textForCutscene2.setText("Coolant Mines in Coolantia.");
+				textForCutscene3.setText("");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-7.png"));
+				break;
+			case 28:
+				textForCutscene1.setText("I'm CO. I am the Commanding Officer");
+				textForCutscene2.setText("of the Anti-Virus Brigade hired");
+				textForCutscene3.setText("out from Red Constellation.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-10.png"));
+				break;
+			case 29:
+				textForCutscene1.setText("Red Constellation?");
+				textForCutscene2.setText("I have not heard of such a kingdom.");
+				textForCutscene3.setText("");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-5.png"));
+				break;
+			case 30:
+				textForCutscene1.setText("Well according to our records,");
+				textForCutscene2.setText("it's been a long time since you last");
+				textForCutscene3.setText("were used, Mars. That may be why.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-6.png"));
+				break;
+			case 31:
+				textForCutscene1.setText("I hail from the kingdom of Ecra of the Burning");
+				textForCutscene2.setText("Mark RPG. I was last played last year");
+				textForCutscene3.setText("when the player finished the game...");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-5.png"));
+				break;
+			case 32:
+				textForCutscene1.setText("*You feel inclined to join these");
+				textForCutscene2.setText("misadventurers. They may need it.");
+				textForCutscene3.setText("Badly.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-8.png"));
+				break;
+			case 33:
+				textForCutscene1.setText(">Introduce yourself as ASCII,");
+				textForCutscene2.setText("the trainer of the Keyboard District's");
+				textForCutscene3.setText("new recruits.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-8.png"));
+				break;
+			case 34:
+				textForCutscene1.setText("I've never seen you before.");
+				textForCutscene2.setText("But you seem like a formidable ally");
+				textForCutscene3.setText("and we need all the help we can get.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-9.png"));
+				break;
+			case 35:
+				textForCutscene1.setText("*They seem to accept you");
+				textForCutscene2.setText("and your clearly superior");
+				textForCutscene3.setText("combat abilities.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-8.png"));
+				break;
+			case 36:
+				textForCutscene1.setText(">Go to Town");
+				textForCutscene2.setText("");
+				textForCutscene3.setText("");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-8.png"));
+				break;
+			case 37:
+				visitGPUFirst=true;
+				mode="town";
+				break;
+			case 38:
+				textForCutscene1.setText("I've never seen you before.");
+				textForCutscene2.setText("But you seem like a formidable ally");
+				textForCutscene3.setText("and we need all the help we can get.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-9.png"));
+				break;
+			case 39:
+				textForCutscene1.setText("*They seem to accept you");
+				textForCutscene2.setText("and your clearly superior");
+				textForCutscene3.setText("combat abilities.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-8.png"));
+				break;
+			case 40:
+				textForCutscene1.setText(">Go to Town");
+				textForCutscene2.setText("");
+				textForCutscene3.setText("");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-8.png"));
+				break;
 		}
 	}
 	
