@@ -10,6 +10,9 @@ import javafx.stage.Stage;
 import javafx.geometry.*;
 import javafx.scene.image.*;
 import java.util.*;
+import javax.sql.rowset.*;
+
+//Jordan Ashe X-X-2021
 
 /*
 	TO DO:
@@ -18,9 +21,10 @@ import java.util.*;
 		-TEXT (FIRST SCENE DONE)
 		-TRANSITION TO FIRST TOWN (DONE)
 	-TOWNS:
-		-SPRITES (3/6) (Viral Center, Motherboard, and the Storage device)
+		-SPRITES (6/6) (DONE)
 		-TEXT (1/5)
 		-MAP FUNCTIONALITY 
+		-ABILITY TO CHANGE PARTY MEMBERS
 	-MAP:
 		-SPRITES
 		-TEXT
@@ -28,7 +32,7 @@ import java.util.*;
 		-COMBAT STARTING
 	-COMBAT:
 		-SPRITES FOR ENEMIES (10/20)
-		-SPRITES FOR CHARACTERS (9/20)
+		-SPRITES FOR CHARACTERS (9/20) --Kook is making one, hound him.
 		-ITEM FUNCIONALITY
 		-TEXT FOR HOW COMBAT IS GOING
 		-ABILITY INTERACTION
@@ -44,10 +48,11 @@ public class DataMiners extends Application {
 	PartyMember co = new PartyMember("CO", 5, 5, 5, 25, "Fire!", "Cover!", "Capture!");
 	PartyMember mars = new PartyMember("Mars", 8, 6, 3, 20, "Slash", "War Cry", "Scale");
 	PartyMember ascii = new PartyMember("ASCII", 10, 2, 1, 20, "Use Sword", "Use Shield", "Go There");
+	PartyMember kyzu = new PartyMember("Kyzu", 15, 2, 10, 10, "Kōgeki", "Hashiru", "En'eki");
 	ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
 	String mode = "intro";
-	String cTown = "gpu";
-	String cTownName = "GPU";
+	String cTown = "ugpu";
+	String cTownName = "UGPU";
 	MenuBar menuBarCombat = new MenuBar();
 	MenuBar menuBarTown = new MenuBar();
 	GridPane town = new GridPane();
@@ -67,12 +72,8 @@ public class DataMiners extends Application {
 	@Override // Override the start method in the Application class
 	public void start(Stage primaryStage) {  
 		pTable[0] = caulder;
-		pTable[1] = co;
-		pTable[2] = mars;
-		pTable[3] = ascii;
 		charUnlocked.add(caulder);
-		itemsOnPerson.add(new Item("HealingPotion",false,1,10));
-		
+		itemsOnPerson.add(new Item("HealingPotion",true,1,10));
 		
 		//-----------------COMBAT------------------
 		Menu menuParty = new Menu("Party");
@@ -109,6 +110,11 @@ public class DataMiners extends Application {
 		});
 		
 		//party tab
+		MenuItem menuItemChange = new MenuItem("Change Party Members");
+		menuParty.getItems().add(menuItemChange);
+		
+		menuItemChange.setOnAction(e -> changeParty());
+		
 		MenuItem menuItemP1 = new MenuItem("Party Member Slot 1");
 		menuParty.getItems().add(menuItemP1);
 		
@@ -238,9 +244,15 @@ public class DataMiners extends Application {
 	
 	void visit(String currentTown){
 		switch (currentTown) {
-			case "gpu":
+			case "ugpu":
 				if (!visitGPUFirst){
 					textIntro=17;	
+				}
+				else if (!charUnlocked.contains(kyzu)){
+					textIntro=37;
+				}
+				else {
+					textIntro=44;
 				}
 				mode="visit";
 				advanceText();
@@ -331,7 +343,7 @@ public class DataMiners extends Application {
 				break;
 			case 14:
 				textForCutscene1.setText("There's a meeting going on");
-				textForCutscene2.setText("at the GPU's Center.");
+				textForCutscene2.setText("at the UGPU's Capital.");
 				textForCutscene3.setText("Everyone is welcome.");
 				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-4.png"));
 				break;
@@ -464,26 +476,63 @@ public class DataMiners extends Application {
 				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-8.png"));
 				break;
 			case 37:
+				pTable[1] = co;
+				pTable[2] = mars;
+				pTable[3] = ascii;
+				charUnlocked.add(co);
+				charUnlocked.add(mars);
+				charUnlocked.add(ascii);
 				visitGPUFirst=true;
 				mode="town";
 				break;
 			case 38:
-				textForCutscene1.setText("I've never seen you before.");
-				textForCutscene2.setText("But you seem like a formidable ally");
-				textForCutscene3.setText("and we need all the help we can get.");
-				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-9.png"));
+				textForCutscene1.setText("Yā nē!");
+				textForCutscene2.setText("Anata wa sono yakkaina uirusu");
+				textForCutscene3.setText("o torinozoku no o tetsudatte imasu ka?");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/visit-2.png"));
 				break;
 			case 39:
-				textForCutscene1.setText("*They seem to accept you");
-				textForCutscene2.setText("and your clearly superior");
-				textForCutscene3.setText("combat abilities.");
-				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-8.png"));
+				textForCutscene1.setText("Um, excuse me?");
+				textForCutscene2.setText("I am deeply sorry, but where I am");
+				textForCutscene3.setText("from I don't speak that language.");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/visit-1.png"));
 				break;
 			case 40:
-				textForCutscene1.setText(">Go to Town");
+				textForCutscene1.setText("Sono uirusu ga kite irai,");
+				textForCutscene2.setText("watashi no tantei gēmu wa");
+				textForCutscene3.setText("konran jōtai ni arimashita!");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/visit-2.png"));
+				break;
+			case 41:
+				textForCutscene1.setText("Huh?");
+				textForCutscene2.setText("Do you wanna join us?");
+				textForCutscene3.setText("");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/visit-1.png"));
+				break;
+			case 42:
+				textForCutscene1.setText("Caulder daisuki!");
 				textForCutscene2.setText("");
 				textForCutscene3.setText("");
-				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-8.png"));
+				picForCutscene = new ImageView(new Image("/images/cutscenes/visit-2.png"));
+				break;
+			case 43:
+				textForCutscene1.setText("Alright then!");
+				textForCutscene2.setText("I'll take that as a yes!");
+				textForCutscene3.setText("(Kyzu joins the fight against the virus!)");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/visit-1.png"));
+				break;
+			case 44:
+				charUnlocked.add(kyzu);
+				mode="town";
+				break;
+			case 45:
+				textForCutscene1.setText("(Nothing seems to be going on...)");
+				textForCutscene2.setText("");
+				textForCutscene3.setText("");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/black.png"));
+				break;
+			case 46:
+				mode="town";
 				break;
 		}
 	}
@@ -500,7 +549,9 @@ public class DataMiners extends Application {
 			ImageView itemImage = new ImageView(item.itemSpr);
 			itemImage.setOnMousePressed(a -> {
 				Item.useItem(item);
-				itemsOnPerson.remove(item);
+				if (item.isKey==false)
+					itemsOnPerson.remove(item);
+	
 				newWindow.close();
 				itemWindow();
 			});
@@ -571,20 +622,23 @@ public class DataMiners extends Application {
 	}
 	
 	public void otherWindow(){
-		VBox vbox2 = new VBox();
+		//VBox vbox2 = new VBox();
 		
-		Tab howToPlayTab = new Tab("Manual");
+		TextArea ta1 = new TextArea("DataMiners is a somewhat complicated game.\nThe goal is to take your party of 4 (or more if you find people willing to join\nyour cause ;] ) and take down the virus that has recently got onto your computer.\n\nGENERAL CONTROLS:\n Party Tab - This tab has the windows for each party member you have\nactive. It also has the CHANGE command, which allows you to change your party members as you see fit. \n\nNOTE: YOU CAN ONLY CHANGE PARTY MEMBERS IN A TOWN.\n\nTOWN CONTROLS:\nVisit - visit the town's center to see if there is anything of use there.\nShop - Visit the town's shop and buy things!\nMap - Open the town's map and access a new location!\n\nITEM CONTROLS:\nTo access an item, simply click on it. \nAlternatively, you can press the 'use first item' button,\nwhich will use the first usable item.\n\nYou have a max of 25 items, and some items cannot be used.\n\nMAP CONTROLS:\nthis is where the map controls will go.\n\nCOMBAT CONTROLS:\nThis is where the combat controls will go.\n\nThank you for playing DataMiners, have a nice day!");
+		ta1.setEditable(false);
+		ta1.setStyle("-fx-opacity: 1;");
+		Tab howToPlayTab = new Tab("Manual",ta1);
 		Tab questTab = new Tab("Current Quest");
 		Tab recentTalkTab = new Tab("Recent Text");
 		Tab settingsTab = new Tab("Settings");
 		TabPane tb = new TabPane(questTab,recentTalkTab,howToPlayTab,settingsTab);
 		
-		vbox2.setPadding(new Insets(10, 10, 10, 10));
-		vbox2.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+		tb.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
+		tb.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 		
-		vbox2.getChildren().addAll(tb);
+		//vbox2.getChildren().addAll(tb);
 		
-		Scene sceneO = new Scene(vbox2,496,200);
+		Scene sceneO = new Scene(tb,496,200);
 		Stage newWindow = new Stage();
 		newWindow.setTitle("Other");
 		newWindow.setResizable(false);
@@ -606,6 +660,41 @@ public class DataMiners extends Application {
 		newWindow.setTitle("About");
 		newWindow.setResizable(false);
 		newWindow.setScene(sceneA);
+		newWindow.show();
+	}
+	
+	public void changeParty(){
+		GridPane gpCP = new GridPane();
+		
+		int row = 0;
+		
+		for (int i=0; i<charUnlocked.size(); i++){
+			PartyMember pm = charUnlocked.get(i);
+			Label pmText = new Label(pm.name);
+			ImageView pmImage = new ImageView(pm.facePlateSpr);
+			pmImage.setOnMousePressed(a -> {
+				//PartyMember.putInParty(pm);
+			});
+			
+			if (i % 5 == 0 && i > 0){
+				row+=2;
+				gpCP.add(pmImage,i%5,row);
+				gpCP.add(pmText,i%5,row+1);
+			}
+			else{
+				gpCP.add(pmImage,i%5,row);
+				gpCP.add(pmText,i%5,row+1);
+			}
+		}
+		
+		gpCP.setPadding(new Insets(10, 10, 10, 10));
+		gpCP.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+		
+		Scene sceneCP = new Scene(gpCP,496,480);
+		Stage newWindow = new Stage();
+		newWindow.setTitle("About");
+		newWindow.setResizable(false);
+		newWindow.setScene(sceneCP);
 		newWindow.show();
 	}
 }

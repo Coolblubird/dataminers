@@ -79,5 +79,25 @@ public class Item {
 			itemWindow.setScene(sceneI);
 			itemWindow.show();
 		}
+		else{
+			VBox vItem = new VBox();
+			Label errorLabel = new Label("This Item is a key Item!");
+			Button btnMyBad = new Button("My bad.");
+			Stage itemWindow = new Stage();
+			
+			btnMyBad.setOnAction(e -> {
+				itemWindow.close();
+			});
+			
+			vItem.getChildren().addAll(errorLabel,btnMyBad);
+			vItem.setAlignment(Pos.TOP_CENTER);
+			
+			Scene sceneI = new Scene(vItem,180,40);
+			itemWindow.setTitle("Key Item Error");
+			itemWindow.setResizable(false);
+			itemWindow.setAlwaysOnTop(true);
+			itemWindow.setScene(sceneI);
+			itemWindow.show();
+		}
 	}
 }
