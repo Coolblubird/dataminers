@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.text.*;
@@ -182,7 +183,13 @@ public class DataMiners extends Application {
 		vbox.setBackground(new Background(new BackgroundFill(Color.HONEYDEW, CornerRadii.EMPTY, Insets.EMPTY)));
 		vbox.setAlignment(Pos.TOP_CENTER);
 		
-		Scene scene = new Scene(vbox, 350, 340);  
+		Scene scene = new Scene(vbox, 350, 340);
+		
+		primaryStage.setOnCloseRequest(e -> {
+			Platform.exit();
+			System.exit(0);
+		});
+		
 		primaryStage.setTitle("DataMiners"); // Set the window title
 		primaryStage.setResizable(false); // bah screw resizing!
 		primaryStage.setScene(scene); // Place the scene in the window
@@ -217,8 +224,6 @@ public class DataMiners extends Application {
 				break;
 		}
 	}
-	
-	
 	
 	void registerButton(String ability){
 		switch (mode) {
@@ -558,11 +563,11 @@ public class DataMiners extends Application {
 		
 		Scene scene2 = new Scene(gp2,230,300);
 		
-		Stage newWindow = new Stage();
-		newWindow.setTitle(p.name);
-		newWindow.setScene(scene2);
-		newWindow.setResizable(false);
-		newWindow.show();
+		Stage pWindow = new Stage();
+		pWindow.setTitle(p.name);
+		pWindow.setScene(scene2);
+		pWindow.setResizable(false);
+		pWindow.show();
 	}
 	
 	public void otherWindow(){
