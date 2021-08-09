@@ -1,5 +1,15 @@
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.text.*;
+import javafx.scene.control.TabPane.TabClosingPolicy;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.stage.Stage;
+import javafx.geometry.*;
+import javafx.scene.image.*;
 import java.util.*;
-import javafx.scene.image.Image;
 
 interface Battler{
 	void statsUp(int a, int b);
@@ -71,6 +81,76 @@ class PartyMember implements Battler{
 				this.def-=amount;
 				break;
 		}	
+	}
+	
+	public static void putInParty(PartyMember pm){
+		if (DataMiners.pTable[0] != pm && DataMiners.pTable[1] != pm && DataMiners.pTable[2] != pm && DataMiners.pTable[3] != pm){
+			GridPane gpItem = new GridPane();
+			Stage changePartyWindow = new Stage();
+			
+			Button btnP1 = new Button("Slot 1");
+			Button btnP2 = new Button("Slot 2");
+			Button btnP3 = new Button("Slot 3");
+			Button btnP4 = new Button("Slot 4");
+			
+			btnP1.setOnAction(e -> {
+				DataMiners.pTable[0] = pm;
+				changePartyWindow.close();
+			});
+			btnP2.setOnAction(e -> {
+				DataMiners.pTable[1] = pm;
+				changePartyWindow.close();
+			});
+			btnP3.setOnAction(e -> {
+				DataMiners.pTable[2] = pm;
+				changePartyWindow.close();
+			});
+			btnP4.setOnAction(e -> {
+				DataMiners.pTable[3] = pm;
+				changePartyWindow.close();
+			});
+			
+			gpItem.add(new Label("Which slot would you like to place them?"),0,0);
+			gpItem.add(btnP1,0,1);
+			gpItem.add(new Label(DataMiners.pTable[0].name),1,1);
+			gpItem.add(btnP2,0,2);
+			gpItem.add(new Label(DataMiners.pTable[1].name),1,2);
+			gpItem.add(btnP3,0,3);
+			gpItem.add(new Label(DataMiners.pTable[2].name),1,3);
+			gpItem.add(btnP4,0,4);
+			gpItem.add(new Label(DataMiners.pTable[3].name),1,4);
+			
+			gpItem.setPadding(new Insets(10, 10, 10, 10));
+			gpItem.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
+			
+			Scene sceneI = new Scene(gpItem,320,150);
+
+			changePartyWindow.setTitle("Items");
+			changePartyWindow.setResizable(false);
+			changePartyWindow.setAlwaysOnTop(true);
+			changePartyWindow.setScene(sceneI);
+			changePartyWindow.show();
+		}
+		else{
+			VBox cpItem = new VBox();
+			Label errorLabel = new Label("They are already in the party!");
+			Button btnMyBad = new Button("My bad.");
+			Stage changePartyWindow = new Stage();
+			
+			btnMyBad.setOnAction(e -> {
+				changePartyWindow.close();
+			});
+			
+			cpItem.getChildren().addAll(errorLabel,btnMyBad);
+			cpItem.setAlignment(Pos.TOP_CENTER);
+			
+			Scene sceneCP = new Scene(cpItem,200,60);
+			changePartyWindow.setTitle("Already in Party Error");
+			changePartyWindow.setResizable(false);
+			changePartyWindow.setAlwaysOnTop(true);
+			changePartyWindow.setScene(sceneCP);
+			changePartyWindow.show();
+		}
 	}
 	
 	boolean isKO(){

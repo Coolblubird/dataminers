@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import javafx.geometry.*;
 import javafx.scene.image.*;
 import java.util.*;
-import javax.sql.rowset.*;
 
 //Jordan Ashe X-X-2021
 
@@ -24,7 +23,7 @@ import javax.sql.rowset.*;
 		-SPRITES (6/6) (DONE)
 		-TEXT (1/5)
 		-MAP FUNCTIONALITY 
-		-ABILITY TO CHANGE PARTY MEMBERS
+		-ABILITY TO CHANGE PARTY MEMBERS (DONE)
 	-MAP:
 		-SPRITES
 		-TEXT
@@ -49,6 +48,7 @@ public class DataMiners extends Application {
 	PartyMember mars = new PartyMember("Mars", 8, 6, 3, 20, "Slash", "War Cry", "Scale");
 	PartyMember ascii = new PartyMember("ASCII", 10, 2, 1, 20, "Use Sword", "Use Shield", "Go There");
 	PartyMember kyzu = new PartyMember("Kyzu", 15, 2, 10, 10, "Kōgeki", "Hashiru", "En'eki");
+	PartyMember kyzu = new PartyMember("Kyzu", 15, 2, 10, 10, "Kōgeki", "Hashiru", "En'eki");
 	ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
 	String mode = "intro";
 	String cTown = "ugpu";
@@ -68,12 +68,16 @@ public class DataMiners extends Application {
 	Button btnMap = new Button("Map");
 	int textIntro = 0;
 	boolean visitGPUFirst = false;
+	TextArea eventLog = new TextArea("This is where events will pile up as you play:");
 	
 	@Override // Override the start method in the Application class
 	public void start(Stage primaryStage) {  
 		pTable[0] = caulder;
 		charUnlocked.add(caulder);
-		itemsOnPerson.add(new Item("HealingPotion",true,1,10));
+		itemsOnPerson.add(new Item("HealingPotion",false,1,10));
+		eventLog.setText(eventLog.getText() + "\n-Booted the program.");
+		eventLog.setEditable(false);
+		eventLog.setStyle("-fx-opacity: 1;");
 		
 		//-----------------COMBAT------------------
 		Menu menuParty = new Menu("Party");
@@ -259,6 +263,8 @@ public class DataMiners extends Application {
 				modeMachine();
 				break;
 		}
+		
+		eventLog.setText(eventLog.getText() + "\n-Visited " + cTownName + "'s Center.");
 	}
 	
 	void shop(String currentTown){
@@ -343,7 +349,7 @@ public class DataMiners extends Application {
 				break;
 			case 14:
 				textForCutscene1.setText("There's a meeting going on");
-				textForCutscene2.setText("at the UGPU's Capital.");
+				textForCutscene2.setText("at the United Graphic Proccessing Unit's Capital.");
 				textForCutscene3.setText("Everyone is welcome.");
 				picForCutscene = new ImageView(new Image("/images/cutscenes/intro-4.png"));
 				break;
@@ -482,6 +488,9 @@ public class DataMiners extends Application {
 				charUnlocked.add(co);
 				charUnlocked.add(mars);
 				charUnlocked.add(ascii);
+				eventLog.setText(eventLog.getText() + "\n-" + co.name + " joined against the virus!");
+				eventLog.setText(eventLog.getText() + "\n-" + mars.name + " joined against the virus!");
+				eventLog.setText(eventLog.getText() + "\n-" + ascii.name + " joined against the virus!");
 				visitGPUFirst=true;
 				mode="town";
 				break;
@@ -523,6 +532,7 @@ public class DataMiners extends Application {
 				break;
 			case 44:
 				charUnlocked.add(kyzu);
+				eventLog.setText(eventLog.getText() + "\n-" + kyzu.name + " joined against the virus!");
 				mode="town";
 				break;
 			case 45:
@@ -624,13 +634,13 @@ public class DataMiners extends Application {
 	public void otherWindow(){
 		//VBox vbox2 = new VBox();
 		
-		TextArea ta1 = new TextArea("DataMiners is a somewhat complicated game.\nThe goal is to take your party of 4 (or more if you find people willing to join\nyour cause ;] ) and take down the virus that has recently got onto your computer.\n\nGENERAL CONTROLS:\n Party Tab - This tab has the windows for each party member you have\nactive. It also has the CHANGE command, which allows you to change your party members as you see fit. \n\nNOTE: YOU CAN ONLY CHANGE PARTY MEMBERS IN A TOWN.\n\nTOWN CONTROLS:\nVisit - visit the town's center to see if there is anything of use there.\nShop - Visit the town's shop and buy things!\nMap - Open the town's map and access a new location!\n\nITEM CONTROLS:\nTo access an item, simply click on it. \nAlternatively, you can press the 'use first item' button,\nwhich will use the first usable item.\n\nYou have a max of 25 items, and some items cannot be used.\n\nMAP CONTROLS:\nthis is where the map controls will go.\n\nCOMBAT CONTROLS:\nThis is where the combat controls will go.\n\nThank you for playing DataMiners, have a nice day!");
+		TextArea ta1 = new TextArea("DataMiners is a somewhat complicated game.\nThe goal is to take your party of 4 (or more if you find people willing to join\nyour cause ;] ) and take down the virus that has recently got onto your \ncomputer.\n\nGENERAL CONTROLS:\n Party Tab - This tab has the windows for each party member you have\nactive. It also has the CHANGE command, which allows you \nto change your party members as you see fit. Just click on their\nprofile picture and select where you want them to be. \n\nNOTE: YOU CAN ONLY CHANGE PARTY MEMBERS IN A TOWN.\n\nTOWN CONTROLS:\nVisit - visit the town's center to see if there is anything of use there.\nShop - Visit the town's shop and buy things!\nMap - Open the town's map and access a new location!\n\nITEM CONTROLS:\nTo access an item, simply click on it. \nAlternatively, you can press the 'use first item' button,\nwhich will use the first usable item.\n\nYou have a max of 25 items, and some items cannot be used.\n\nMAP CONTROLS:\nthis is where the map controls will go.\n\nCOMBAT CONTROLS:\nThis is where the combat controls will go.\n\nThank you for playing DataMiners, have a nice day!");
 		ta1.setEditable(false);
 		ta1.setStyle("-fx-opacity: 1;");
 		Tab howToPlayTab = new Tab("Manual",ta1);
 		Tab questTab = new Tab("Current Quest");
-		Tab recentTalkTab = new Tab("Recent Text");
 		Tab settingsTab = new Tab("Settings");
+		Tab recentTalkTab = new Tab("Recent Text",eventLog);
 		TabPane tb = new TabPane(questTab,recentTalkTab,howToPlayTab,settingsTab);
 		
 		tb.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
@@ -673,17 +683,17 @@ public class DataMiners extends Application {
 			Label pmText = new Label(pm.name);
 			ImageView pmImage = new ImageView(pm.facePlateSpr);
 			pmImage.setOnMousePressed(a -> {
-				//PartyMember.putInParty(pm);
+				PartyMember.putInParty(pm);
 			});
 			
-			if (i % 5 == 0 && i > 0){
+			if (i % 4 == 0 && i > 0){
 				row+=2;
-				gpCP.add(pmImage,i%5,row);
-				gpCP.add(pmText,i%5,row+1);
+				gpCP.add(pmImage,i%4,row);
+				gpCP.add(pmText,i%4,row+1);
 			}
 			else{
-				gpCP.add(pmImage,i%5,row);
-				gpCP.add(pmText,i%5,row+1);
+				gpCP.add(pmImage,i%4,row);
+				gpCP.add(pmText,i%4,row+1);
 			}
 		}
 		

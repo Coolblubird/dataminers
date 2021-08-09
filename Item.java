@@ -92,7 +92,7 @@ public class Item {
 			vItem.getChildren().addAll(errorLabel,btnMyBad);
 			vItem.setAlignment(Pos.TOP_CENTER);
 			
-			Scene sceneI = new Scene(vItem,180,40);
+			Scene sceneI = new Scene(vItem,180,60);
 			itemWindow.setTitle("Key Item Error");
 			itemWindow.setResizable(false);
 			itemWindow.setAlwaysOnTop(true);
