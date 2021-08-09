@@ -29,6 +29,10 @@ import java.util.*;
 		-TEXT
 		-ABILITY INTERACTION
 		-COMBAT STARTING
+		-DUNGEONS
+			-SPRITES (0/10)
+			-EVENTS
+			-MAP INTERACTION
 	-COMBAT:
 		-SPRITES FOR ENEMIES (10/20)
 		-SPRITES FOR CHARACTERS (9/20) --Kook is making one, hound him.
@@ -37,6 +41,11 @@ import java.util.*;
 		-ABILITY INTERACTION
 	-STORY:
 		-YEAH YOU SHOULD PROBABLY WRITE THAT LMAO
+	-OTHER TAB:
+		-QUEST TAB
+		-SETTINGS TAB
+		-EVENT LOG (DONE)
+		-MANUAL (FINISH THE MAP AND COMBAT ONES PLS THANKS)
 */
 
 public class DataMiners extends Application {   
@@ -48,11 +57,13 @@ public class DataMiners extends Application {
 	PartyMember mars = new PartyMember("Mars", 8, 6, 3, 20, "Slash", "War Cry", "Scale");
 	PartyMember ascii = new PartyMember("ASCII", 10, 2, 1, 20, "Use Sword", "Use Shield", "Go There");
 	PartyMember kyzu = new PartyMember("Kyzu", 15, 2, 10, 10, "Kōgeki", "Hashiru", "En'eki");
-	PartyMember kyzu = new PartyMember("Kyzu", 15, 2, 10, 10, "Kōgeki", "Hashiru", "En'eki");
 	ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
 	String mode = "intro";
 	String cTown = "ugpu";
 	String cTownName = "UGPU";
+	String cQuest = "N/A";
+	String cQuestInfo = "N/A";
+	String cQuestEnemy = "N/A";
 	MenuBar menuBarCombat = new MenuBar();
 	MenuBar menuBarTown = new MenuBar();
 	GridPane town = new GridPane();
@@ -66,9 +77,13 @@ public class DataMiners extends Application {
 	Button btnVisit = new Button("Visit");
 	Button btnShop = new Button("Shop");
 	Button btnMap = new Button("Map");
+	Button btnQuest = new Button("Quest");
+	Button btnAcceptQuest = new Button("Accept");
 	int textIntro = 0;
 	boolean visitGPUFirst = false;
+	boolean quest1complete = false;
 	TextArea eventLog = new TextArea("This is where events will pile up as you play:");
+	TextArea questLog = new TextArea(cQuest + "\n" + cQuestInfo + "\n");
 	
 	@Override // Override the start method in the Application class
 	public void start(Stage primaryStage) {  
@@ -78,6 +93,8 @@ public class DataMiners extends Application {
 		eventLog.setText(eventLog.getText() + "\n-Booted the program.");
 		eventLog.setEditable(false);
 		eventLog.setStyle("-fx-opacity: 1;");
+		questLog.setEditable(false);
+		questLog.setStyle("-fx-opacity: 1;");
 		
 		//-----------------COMBAT------------------
 		Menu menuParty = new Menu("Party");
@@ -147,6 +164,8 @@ public class DataMiners extends Application {
 
 		menuItemItems.setOnAction(e -> itemWindow());
 		
+		
+		
 		//-------------------TOWN---------------------
 		btnVisit.setOnAction(e -> {
 			visit(cTown);
@@ -161,6 +180,10 @@ public class DataMiners extends Application {
 			modeMachine();
 		});
 		
+		btnQuest.setOnAction(e->{
+			quest(cTown);
+		});
+		
 		Label townName = new Label(cTownName);
 		townName.setFont(new Font(20.0));
 		
@@ -168,11 +191,12 @@ public class DataMiners extends Application {
 		town.add(new Label("Where to, sir?"),0,1);
 		town.add(townName,1,0);
 		town.add(btnVisit,1,1);
+		town.add(btnQuest,0,2);
 		town.add(btnShop,1,2);
 		town.add(btnMap,1,3);
-		town.setPadding(new Insets(5, 10, 10, 10));
 		town.setVgap(4);
 		town.setHgap(4);
+		town.setPadding(new Insets(0, 10, 10, 10));
 		
 		//-------------------INTRO SCENE--------------
 		btnIntro.setOnAction(e -> {
@@ -265,6 +289,41 @@ public class DataMiners extends Application {
 		}
 		
 		eventLog.setText(eventLog.getText() + "\n-Visited " + cTownName + "'s Center.");
+	}
+	
+	void quest(String currentTown){
+		GridPane gpQ = new GridPane();
+		Stage newWindow = new Stage();
+		
+		switch (currentTown) {
+			case "ugpu":
+				if (quest1complete == false){
+					gpQ.add(new Label("Descend Below - Grandma Calculator:\n\tThey say below the town there is a virus that has taken root of\nthe old storages down there.\n\nI guess what I am asking is easy to follow, but could\nyou be a dearie and slay that nasty and mean Viral Officer?\n\n(Defeat one Viral Officer in the Cellar Dungeon)"),0,1);
+					
+					btnAcceptQuest.setOnAction(e -> {
+						cQuest = "Descend Below";
+						cQuestInfo = "Below the town, in the Cellar Dungeon, a Viral Officer has set up camp!";
+						cQuestEnemy = "viralofficer";
+						questLog.setText(cQuest + "\n" + cQuestInfo);
+					});
+					
+					gpQ.add(btnAcceptQuest,0,2);
+				}
+				else{
+					gpQ.add(new Label("No Quest Availble:\n\tSorry, but you have already completed the quest here."),0,1);
+				}
+		}
+		
+		gpQ.setPadding(new Insets(10, 10, 10, 10));
+		gpQ.setBackground(new Background(new BackgroundFill(Color.LIGHTGOLDENRODYELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+		
+		Scene sceneQ = new Scene(gpQ,496,480);
+		
+		newWindow.setTitle("Availible Quests - " + cTownName);
+		newWindow.setResizable(false);
+		newWindow.setScene(sceneQ);
+		newWindow.show();
+		eventLog.setText(eventLog.getText() + "\n-Visited " + cTownName + "'s Quest Board.");
 	}
 	
 	void shop(String currentTown){
@@ -638,7 +697,7 @@ public class DataMiners extends Application {
 		ta1.setEditable(false);
 		ta1.setStyle("-fx-opacity: 1;");
 		Tab howToPlayTab = new Tab("Manual",ta1);
-		Tab questTab = new Tab("Current Quest");
+		Tab questTab = new Tab("Current Quest",questLog);
 		Tab settingsTab = new Tab("Settings");
 		Tab recentTalkTab = new Tab("Recent Text",eventLog);
 		TabPane tb = new TabPane(questTab,recentTalkTab,howToPlayTab,settingsTab);
