@@ -82,6 +82,8 @@ public class DataMiners extends Application {
 	int textIntro = 0;
 	boolean visitGPUFirst = false;
 	boolean quest1complete = false;
+	static boolean inCombat = false;
+	static boolean pTurn = true;
 	TextArea eventLog = new TextArea("This is where events will pile up as you play:");
 	TextArea questLog = new TextArea(cQuest + "\n" + cQuestInfo + "\n");
 	
@@ -298,7 +300,7 @@ public class DataMiners extends Application {
 		switch (currentTown) {
 			case "ugpu":
 				if (quest1complete == false){
-					gpQ.add(new Label("Descend Below - Grandma Calculator:\n\tThey say below the town there is a virus that has taken root of\nthe old storages down there.\n\nI guess what I am asking is easy to follow, but could\nyou be a dearie and slay that nasty and mean Viral Officer?\n\n(Defeat one Viral Officer in the Cellar Dungeon)"),0,1);
+					gpQ.add(new Label("Descend Below - Grandma Calculator:\n\tThey say below the town there is a virus that has taken root of\nthe old storages down there.\n\nI guess what I am asking is easy to follow, but could\nyou be a dearie and slay that nasty and mean Viral Officer?\n\n(Defeat one Viral Officer in the Trash Bin Dungeon)"),0,1);
 					
 					btnAcceptQuest.setOnAction(e -> {
 						cQuest = "Descend Below";
