@@ -29,7 +29,7 @@ public class Dungeon {
 		if (this.events>0){
 			GridPane gpEvent = new GridPane();
 			Stage eventWindow = new Stage();
-			int event = Math.random()*10;
+			int event = Math.random()*5;
 			
 			switch (d.name) {
 				case "trashbin":
@@ -37,10 +37,39 @@ public class Dungeon {
 						case 0:
 							if (DataMiners.pTable[0].explr+DataMiners.pTable[0].explr+DataMiners.pTable[0].explr+DataMiners.pTable[0].explr > 40){
 								gpEvent.add(new Label("Do you Wish to Encounter:"),0,0);
-								gpEvent.add(new Label("\tEnemies"),0,0);
+								gpEvent.add(new Label("\tStray Code"),0,1);
 							}
 							else{
-								DataMiners.combat()
+								DataMiners.combat(1,2,1,0);
+								eventWindow.close();
+							}
+							break;
+						case 1:
+							gpEvent.add(new Label("You found a HealthPotion!"),0,0);
+							gpEvent.add(new Label("\tWill you take it?"),0,1);
+							break;
+						case 2:
+							gpEvent.add(new Label("You found an AttackFruit!"),0,0);
+							gpEvent.add(new Label("\tWill you take it?"),0,1);
+							break;
+						case 3:
+							if (DataMiners.pTable[0].explr+DataMiners.pTable[0].explr+DataMiners.pTable[0].explr+DataMiners.pTable[0].explr > 40){
+								gpEvent.add(new Label("Do you Wish to Encounter:"),0,0);
+								gpEvent.add(new Label("\tNavyWindCO and co."),0,1);
+							}
+							else{
+								DataMiners.combat(1,2,1,0);
+								eventWindow.close();
+							}
+							break;
+						case 4:
+							if (DataMiners.pTable[0].explr+DataMiners.pTable[0].explr+DataMiners.pTable[0].explr+DataMiners.pTable[0].explr > 40){
+								gpEvent.add(new Label("Do you Wish to Encounter:"),0,0);
+								gpEvent.add(new Label("\tHauntedCode"),0,1);
+							}
+							else{
+								DataMiners.combat(1,2,1,0);
+								eventWindow.close();
 							}
 							break;
 					}
@@ -51,13 +80,26 @@ public class Dungeon {
 			Button btnP2 = new Button("No");
 			
 			btnP1.setOnAction(e -> {
-				
+				switch (event) {
+					case 0:
+						DataMiners.combat(1,2,1,0);
+						break;
+					case 1:
+						DataMiners.itemsOnPerson.add(new Item("HealingPotion",false,1,10));
+						break;
+					case 2:
+						DataMiners.itemsOnPerson.add(new Item("AttackFruit",false,2,5));
+						break;
+						
+				}
 				eventWindow.close();
 			});
 			btnP2.setOnAction(e -> {
-				
 				eventWindow.close();
 			});
+			
+			gpEvent.add(btnP1,0,2);
+			gpEvent.add(btnP2,0,3);
 			
 			gpEvent.setPadding(new Insets(10, 10, 10, 10));
 			gpEvent.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));

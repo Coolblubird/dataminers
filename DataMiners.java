@@ -10,12 +10,13 @@ import javafx.stage.Stage;
 import javafx.geometry.*;
 import javafx.scene.image.*;
 import java.util.*;
+import java.awt.*;
 
 //Jordan Ashe X-X-2021
 
 /*
 	TO DO:
-	-INTRO:
+	-INTRO: (DONE)
 		-SPRITES (MORE OR LESS DONE)
 		-TEXT (FIRST SCENE DONE)
 		-TRANSITION TO FIRST TOWN (DONE)
@@ -34,30 +35,46 @@ import java.util.*;
 			-EVENTS
 			-MAP INTERACTION
 	-COMBAT:
-		-SPRITES FOR ENEMIES (14/20)
+		-SPRITES FOR ENEMIES (DONE)
 		-SPRITES FOR CHARACTERS (9/20) --Kook is making one, hound him.
 		-ITEM FUNCIONALITY
 		-TEXT FOR HOW COMBAT IS GOING
 		-ABILITY INTERACTION
-	-STORY:
-		-YEAH YOU SHOULD PROBABLY WRITE THAT LMAO
+	-STORY: (KINDA DONE)
+		-YEAH YOU SHOULD PROBABLY WRITE THAT LMAO (OK KINDA DONE)
 	-OTHER TAB:
-		-QUEST TAB
-		-SETTINGS TAB
+		-QUEST TAB (DONE)
+		-SETTINGS TAB (MIGHT DELETE IDK)
 		-EVENT LOG (DONE)
 		-MANUAL (FINISH THE MAP AND COMBAT ONES PLS THANKS)
 */
 
 public class DataMiners extends Application {   
-	//starting characters, name, atk, def, explor, hp, dmg attack, support atk, exploration atk
 	static PartyMember[] pTable = new PartyMember[4];
 	ArrayList<PartyMember> charUnlocked = new ArrayList<PartyMember>();
+	static Enemy[] eCombatTable = new Enemy[4];
+	
+	//starting characters, name, atk, def, explor, hp, dmg attack, support atk, exploration atk
 	PartyMember caulder = new PartyMember("Caulder", 3, 5, 10, 20, "Endure", "Heal", "Map");
 	PartyMember co = new PartyMember("CO", 5, 5, 5, 25, "Fire!", "Cover!", "Capture!");
 	PartyMember mars = new PartyMember("Mars", 8, 6, 3, 20, "Slash", "War Cry", "Scale");
 	PartyMember ascii = new PartyMember("ASCII", 10, 2, 1, 20, "Use Sword", "Use Shield", "Go There");
+	
+	//other party members
 	PartyMember kyzu = new PartyMember("Kyzu", 15, 2, 10, 10, "Kōgeki", "Hashiru", "En'eki");
-	ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
+	
+	//enemies, name, atk, def, hp
+	ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
+	Enemy blank = new Enemy("blank",0,0,0);
+	
+	//UGPU enemies
+	Enemy slimyCode = new Enemy("SlimyCode",2,2,5);
+	Enemy viralOfficer = new Enemy("ViralOfficer",4,7,15);
+	Enemy hauntedCode = new Enemy("HauntedCode",6,1,7);
+	Enemy navyWindCO = new Enemy("NavyWindCO",1,5,10);
+	
+	
+	static ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
 	String mode = "intro";
 	String cTown = "ugpu";
 	String cTownName = "UGPU";
@@ -67,7 +84,8 @@ public class DataMiners extends Application {
 	MenuBar menuBarCombat = new MenuBar();
 	MenuBar menuBarTown = new MenuBar();
 	GridPane town = new GridPane();
-	VBox vbox = new VBox();
+	VBox mainVBox = new VBox();
+	HBox hboxEnemies = new HBox();
 	Label textForCutscene1 = new Label("This, is a computer. ");
 	Label textForCutscene2 = new Label("It may be exactly like yours, or it may not.");
 	Label textForCutscene3 = new Label("");
@@ -85,13 +103,22 @@ public class DataMiners extends Application {
 	static boolean inCombat = false;
 	static boolean pTurn = true;
 	TextArea eventLog = new TextArea("This is where events will pile up as you play:");
-	TextArea questLog = new TextArea(cQuest + "\n" + cQuestInfo + "\n");
+	TextArea questLog = new TextArea(cQuest + "\n" + cQuestInfo);
+	TextArea combatLog = new TextArea("Initiated Combat!");
 	
 	@Override // Override the start method in the Application class
 	public void start(Stage primaryStage) {  
 		pTable[0] = caulder;
 		charUnlocked.add(caulder);
+		
+		enemyList.add(blank);
+		enemyList.add(slimyCode);
+		enemyList.add(hauntedCode);
+		enemyList.add(viralOfficer);
+		enemyList.add(navyWindCO);
+		
 		itemsOnPerson.add(new Item("HealingPotion",false,1,10));
+		
 		eventLog.setText(eventLog.getText() + "\n-Booted the program.");
 		eventLog.setEditable(false);
 		eventLog.setStyle("-fx-opacity: 1;");
@@ -214,12 +241,12 @@ public class DataMiners extends Application {
 		
 		
 		//Start program
-		vbox.getChildren().addAll(menulogo,btnStart);
+		mainVBox.getChildren().addAll(menulogo,btnStart);
 		
-		vbox.setBackground(new Background(new BackgroundFill(Color.HONEYDEW, CornerRadii.EMPTY, Insets.EMPTY)));
-		vbox.setAlignment(Pos.TOP_CENTER);
+		mainVBox.setBackground(new Background(new BackgroundFill(Color.HONEYDEW, CornerRadii.EMPTY, Insets.EMPTY)));
+		mainVBox.setAlignment(Pos.TOP_CENTER);
 		
-		Scene scene = new Scene(vbox, 350, 340);
+		Scene scene = new Scene(mainVBox, 350, 340);
 		
 		primaryStage.setOnCloseRequest(e -> {
 			Platform.exit();
@@ -242,21 +269,21 @@ public class DataMiners extends Application {
 	}
 	
 	public void modeMachine(){
-		vbox.getChildren().clear();
+		mainVBox.getChildren().clear();
 		switch (mode) {
 			case "intro":
-				vbox.getChildren().addAll(picForCutscene,textForCutscene1,textForCutscene2,textForCutscene3,btnIntro);
+				mainVBox.getChildren().addAll(picForCutscene,textForCutscene1,textForCutscene2,textForCutscene3,btnIntro);
 				break;
 			case "combat":
-				vbox.getChildren().addAll(menuBarCombat);
+				mainVBox.getChildren().addAll(menuBarCombat,hboxEnemies,combatLog);
 				break;
 			case "town":		
-				vbox.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
+				mainVBox.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
 				picForTown = new ImageView(new Image("/images/locations/" + cTown + ".png"));
-				vbox.getChildren().addAll(menuBarTown,town);
+				mainVBox.getChildren().addAll(menuBarTown,town);
 				break;
 			case "visit":
-				vbox.getChildren().addAll(picForCutscene,textForCutscene1,textForCutscene2,textForCutscene3,btnIntro);
+				mainVBox.getChildren().addAll(picForCutscene,textForCutscene1,textForCutscene2,textForCutscene3,btnIntro);
 				break;
 		}
 	}
@@ -265,11 +292,53 @@ public class DataMiners extends Application {
 		switch (mode) {
 			case "combat":
 				//register attack
+				if (pTurn==true){
+					int tempValue
+					switch (ability) {
+						//attack abilities
+						case "Endure":
+						case "Fire!":
+						case "Slash":
+						case "Use Sword":
+						case "Kōgeki":
+							
+							break;
+						//Def abilities
+						case "Heal":
+						case "Cover!":
+						case "War Cry":
+						case "Use Shield":
+						case "Hashiru":
+						
+							break;
+						//Explore abilities
+						case "Map":
+						case "Capture!":
+						case "Scale":
+						case "Go There":
+						case "En'eki":
+						
+							break;
+					}
+				}
+				else {
+					combatLog.setText(combatLog.getText + "It is not your turn, please wait.")
+				}
 				break;
 			case "town":
 				//register map movement
 				break;
 		}
+	}
+	
+	void combat(int e1, int e2, int e3, int e4){
+		mode="combat";
+		Enemy temp1 = enemyList.get(e1);
+		Enemy temp2 = enemyList.get(e2);
+		Enemy temp3 = enemyList.get(e3);
+		Enemy temp4 = enemyList.get(e4);
+		
+		hboxEnemies.getChildren().addAll(new ImageView(temp1.btleSpr),new ImageView(temp2.btleSpr),new ImageView(temp3.btleSpr),new ImageView(temp4.btleSpr));
 	}
 	
 	void visit(String currentTown){
@@ -375,7 +444,7 @@ public class DataMiners extends Application {
 				textForCutscene1.setText("(Elsewhere... ");
 				textForCutscene2.setText("Inside of your computer...)");
 				textForCutscene3.setText("");
-				vbox.setBackground(new Background(new BackgroundFill(Color.LIGHTCYAN, CornerRadii.EMPTY, Insets.EMPTY)));
+				mainVBox.setBackground(new Background(new BackgroundFill(Color.LIGHTCYAN, CornerRadii.EMPTY, Insets.EMPTY)));
 				picForCutscene = new ImageView(new Image("/images/cutscenes/black.png"));
 				break;
 			case 9:
