@@ -292,7 +292,7 @@ public class DataMiners extends Application {
 			case "combat":
 				//register attack
 				if (pTurn==true){
-					int tempValue
+					int tempValue = 0;
 					switch (ability) {
 						//attack abilities
 						case "Endure":
@@ -321,7 +321,7 @@ public class DataMiners extends Application {
 					}
 				}
 				else {
-					combatLog.setText(combatLog.getText + "It is not your turn, please wait.")
+					combatLog.setText(combatLog.getText() + "It is not your turn, please wait.");
 				}
 				break;
 			case "town":
