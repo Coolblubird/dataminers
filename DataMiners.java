@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import javafx.geometry.*;
 import javafx.scene.image.*;
 import java.util.*;
-import java.awt.*;
 
 //Jordan Ashe X-X-2021
 
