@@ -99,7 +99,6 @@ public class DataMiners extends Application {
 	Button btnQuest = new Button("Quest");
 	Button btnAcceptQuest = new Button("Accept");
 	int textIntro = 0;
-	boolean steppedOffTown= false;
 	boolean visitGPUFirst = false;
 	boolean quest1complete = false;
 	static boolean inCombat = false;
@@ -219,9 +218,9 @@ public class DataMiners extends Application {
 		mapPane.setPrefSize(700,670);
 		//locations
 		ImageView ugpuMap = new ImageView(new Image("/images/locations/map/ugpu.PNG"));
-		ugpuMap.relocate(8,45);
+		ugpuMap.relocate(8,64);
 		ImageView trashBinMap = new ImageView(new Image("/images/locations/map/trashbin.PNG"));
-		trashBinMap.relocate(8,84);
+		trashBinMap.relocate(8,100);
 		ImageView hardDriveMap = new ImageView(new Image("/images/locations/map/harddriveton.PNG"));
 		hardDriveMap.relocate(8,236);
 		
@@ -231,10 +230,18 @@ public class DataMiners extends Application {
 		
 		//move plr
 		mapPane.setOnMouseClicked(e -> {
-			if (e.getY() > 26 && e.getY() < 628){
+			if (e.getY() > 76 && e.getY() < 628){
+				
 				plrMap.relocate(e.getX()-16,e.getY()-24);
 			}
-			steppedOffTown=false;
+		});
+		
+		ugpuMap.setOnMouseClicked(e -> {
+			System.out.println("apples");
+			cTownName="UGPU";
+			cTown="ugpu";
+			mode="town";
+			modeMachine();
 		});
 		
 		mapPane.getChildren().addAll(ugpuMap,trashBinMap,hardDriveMap,plrMap);
@@ -259,7 +266,6 @@ public class DataMiners extends Application {
 		btnMap.setOnAction(e->{
 			if (charUnlocked.contains(co)){
 				mode="map";
-				steppedOffTown=true;
 				modeMachine();
 			}
 			else{
@@ -292,15 +298,15 @@ public class DataMiners extends Application {
 		townName.setFont(new Font(20.0));
 		
 		town.add(picForTown,0,0);
-		town.add(new Label("Where to, sir?"),0,1);
+		town.add(new Label(townInfo(cTown)),0,1);
 		town.add(townName,1,0);
-		town.add(btnVisit,1,1);
+		town.add(btnVisit,1,2);
 		town.add(btnQuest,0,2);
-		town.add(btnShop,1,2);
-		town.add(btnMap,1,3);
+		town.add(btnShop,1,3);
+		town.add(btnMap,1,4);
 		town.setVgap(4);
 		town.setHgap(4);
-		town.setPadding(new Insets(0, 10, 10, 10));
+		town.setPadding(new Insets(0, 20, 20, 20));
 		
 		//-------------------INTRO SCENE--------------
 		btnIntro.setOnAction(e -> {
@@ -914,6 +920,15 @@ public class DataMiners extends Application {
 		newWindow.setResizable(false);
 		newWindow.setScene(sceneCP);
 		newWindow.show();
+	}
+	
+	public String townInfo(String townName){
+		if (townName == "ugpu"){
+			return "This town is known for their exports of graphic tiles. \nThey are very friendly once you get to know them. \nThey are the least of the towns affected by the virus.";
+		}
+		else{
+			return "yeah.";
+		}
 	}
 }
 
