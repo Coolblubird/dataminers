@@ -72,7 +72,7 @@ public class DataMiners extends Application {
 	Enemy hauntedCode = new Enemy("HauntedCode",6,1,7);
 	Enemy navyWindCO = new Enemy("NavyWindCO",1,5,10);
 	
-	
+	//various variables
 	static ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
 	String mode = "intro";
 	String cTown = "ugpu";
@@ -82,9 +82,11 @@ public class DataMiners extends Application {
 	String cQuestEnemy = "N/A";
 	MenuBar menuBarCombat = new MenuBar();
 	MenuBar menuBarTown = new MenuBar();
+	MenuBar menuBarMap = new MenuBar();
 	GridPane town = new GridPane();
 	VBox mainVBox = new VBox();
 	HBox hboxEnemies = new HBox();
+	StackPane mapSP = new StackPane();
 	Label textForCutscene1 = new Label("This, is a computer. ");
 	Label textForCutscene2 = new Label("It may be exactly like yours, or it may not.");
 	Label textForCutscene3 = new Label("");
@@ -97,6 +99,7 @@ public class DataMiners extends Application {
 	Button btnQuest = new Button("Quest");
 	Button btnAcceptQuest = new Button("Accept");
 	int textIntro = 0;
+	boolean steppedOffTown= false;
 	boolean visitGPUFirst = false;
 	boolean quest1complete = false;
 	static boolean inCombat = false;
@@ -136,8 +139,9 @@ public class DataMiners extends Application {
 		menuOther.getItems().add(menuItemOther);
 		menuAbout.getItems().add(menuItemAbout);
 		
-		menuBarCombat.getMenus().addAll(menuParty,menuItems);
+		menuBarCombat.getMenus().addAll(menuParty,menuItems,menuAbout);
 		menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
+		menuBarMap.getMenus().addAll(menuParty,menuOther,menuAbout);
 
 		//items tab
 		MenuItem menuItemUseFirst = new MenuItem("Use First Item");
@@ -162,7 +166,31 @@ public class DataMiners extends Application {
 		MenuItem menuItemChange = new MenuItem("Change Party Members");
 		menuParty.getItems().add(menuItemChange);
 		
-		menuItemChange.setOnAction(e -> changeParty());
+		menuItemChange.setOnAction(e -> {
+			if (mode=="town"){
+				changeParty();
+			}
+			else{
+				VBox vItem = new VBox();
+				Label errorLabel = new Label("You can only change in a town!");
+				Button btnMyBad = new Button("My bad.");
+				Stage errorWindow = new Stage();
+				
+				btnMyBad.setOnAction(p -> {
+					errorWindow.close();
+				});
+				
+				vItem.getChildren().addAll(errorLabel,btnMyBad);
+				vItem.setAlignment(Pos.TOP_CENTER);
+				
+				Scene sceneI = new Scene(vItem,200,60);
+				errorWindow.setTitle("Party Error");
+				errorWindow.setResizable(false);
+				errorWindow.setAlwaysOnTop(true);
+				errorWindow.setScene(sceneI);
+				errorWindow.show();
+			}
+		});
 		
 		MenuItem menuItemP1 = new MenuItem("Party Member Slot 1");
 		menuParty.getItems().add(menuItemP1);
@@ -185,14 +213,39 @@ public class DataMiners extends Application {
 		menuItemP4.setOnAction(e -> partyWindow(pTable[3]));
 		
 		//-------------------MAP----------------------
+		ImageView mapBack = new ImageView(new Image("/images/map.PNG"));
+		
+		Pane mapPane = new Pane();
+		mapPane.setPrefSize(700,670);
+		//locations
+		ImageView ugpuMap = new ImageView(new Image("/images/locations/map/ugpu.PNG"));
+		ugpuMap.relocate(8,45);
+		ImageView trashBinMap = new ImageView(new Image("/images/locations/map/trashbin.PNG"));
+		trashBinMap.relocate(8,84);
+		ImageView hardDriveMap = new ImageView(new Image("/images/locations/map/harddriveton.PNG"));
+		hardDriveMap.relocate(8,236);
+		
+		//plr on map
+		ImageView plrMap = new ImageView(new Image("/images/partyMembers/" + caulder.fileName + "/map.PNG"));
+		plrMap.relocate(8,32);
+		
+		//move plr
+		mapPane.setOnMouseClicked(e -> {
+			if (e.getY() > 26 && e.getY() < 628){
+				plrMap.relocate(e.getX()-16,e.getY()-24);
+			}
+			steppedOffTown=false;
+		});
+		
+		mapPane.getChildren().addAll(ugpuMap,trashBinMap,hardDriveMap,plrMap);
+		mapSP.getChildren().addAll(mapBack,mapPane);
+		
 		
 		//-------------------EXTRAS TAB---------------
 		MenuItem menuItemItems = new MenuItem("Items");
 		menuItems.getItems().add(menuItemItems);
 
 		menuItemItems.setOnAction(e -> itemWindow());
-		
-		
 		
 		//-------------------TOWN---------------------
 		btnVisit.setOnAction(e -> {
@@ -204,8 +257,31 @@ public class DataMiners extends Application {
 		});
 		
 		btnMap.setOnAction(e->{
-			mode="map";
-			modeMachine();
+			if (charUnlocked.contains(co)){
+				mode="map";
+				steppedOffTown=true;
+				modeMachine();
+			}
+			else{
+				VBox vItem = new VBox();
+				Label errorLabel = new Label("You may wanna go Visit the town first!");
+				Button btnMyBad = new Button("My bad.");
+				Stage errorWindow = new Stage();
+				
+				btnMyBad.setOnAction(p -> {
+					errorWindow.close();
+				});
+				
+				vItem.getChildren().addAll(errorLabel,btnMyBad);
+				vItem.setAlignment(Pos.TOP_CENTER);
+				
+				Scene sceneI = new Scene(vItem,250,60);
+				errorWindow.setTitle("Map Error");
+				errorWindow.setResizable(false);
+				errorWindow.setAlwaysOnTop(true);
+				errorWindow.setScene(sceneI);
+				errorWindow.show();
+			}
 		});
 		
 		btnQuest.setOnAction(e->{
@@ -245,7 +321,7 @@ public class DataMiners extends Application {
 		mainVBox.setBackground(new Background(new BackgroundFill(Color.HONEYDEW, CornerRadii.EMPTY, Insets.EMPTY)));
 		mainVBox.setAlignment(Pos.TOP_CENTER);
 		
-		Scene scene = new Scene(mainVBox, 350, 340);
+		Scene scene = new Scene(mainVBox, 700, 670);
 		
 		primaryStage.setOnCloseRequest(e -> {
 			Platform.exit();
@@ -283,6 +359,9 @@ public class DataMiners extends Application {
 				break;
 			case "visit":
 				mainVBox.getChildren().addAll(picForCutscene,textForCutscene1,textForCutscene2,textForCutscene3,btnIntro);
+				break;
+			case "map":
+				mainVBox.getChildren().addAll(menuBarMap, mapSP);
 				break;
 		}
 	}
@@ -831,7 +910,7 @@ public class DataMiners extends Application {
 		
 		Scene sceneCP = new Scene(gpCP,496,480);
 		Stage newWindow = new Stage();
-		newWindow.setTitle("About");
+		newWindow.setTitle("Change Party");
 		newWindow.setResizable(false);
 		newWindow.setScene(sceneCP);
 		newWindow.show();
