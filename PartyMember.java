@@ -85,7 +85,7 @@ class PartyMember implements Battler{
 	
 	public static void putInParty(PartyMember pm){
 		if (DataMiners.pTable[0] != pm && DataMiners.pTable[1] != pm && DataMiners.pTable[2] != pm && DataMiners.pTable[3] != pm){
-			GridPane gpItem = new GridPane();
+			GridPane gpParty = new GridPane();
 			Stage changePartyWindow = new Stage();
 			
 			Button btnP1 = new Button("Slot 1");
@@ -110,25 +110,29 @@ class PartyMember implements Battler{
 				changePartyWindow.close();
 			});
 			
-			gpItem.add(new Label("Which slot would you like to place them?"),0,0);
-			gpItem.add(btnP1,0,1);
-			gpItem.add(new Label(DataMiners.pTable[0].name),1,1);
-			gpItem.add(btnP2,0,2);
-			gpItem.add(new Label(DataMiners.pTable[1].name),1,2);
-			gpItem.add(btnP3,0,3);
-			gpItem.add(new Label(DataMiners.pTable[2].name),1,3);
-			gpItem.add(btnP4,0,4);
-			gpItem.add(new Label(DataMiners.pTable[3].name),1,4);
+			gpParty.add(new Label("Which slot would you like to place them?"),0,0);
+			gpParty.add(new Label(pm.name + "\nHP: \t" + pm.chp + "/" + pm.mhp),0,1);
+			gpParty.add(new Label("ATK: \t" + pm.atk),0,2);
+			gpParty.add(new Label("DEF: \t" + pm.def),0,3);
+			gpParty.add(new Label("Explr: \t" + pm.explr),0,4);
+			gpParty.add(btnP1,0,5);
+			gpParty.add(new Label(DataMiners.pTable[0].name),1,5);
+			gpParty.add(btnP2,0,6);
+			gpParty.add(new Label(DataMiners.pTable[1].name),1,6);
+			gpParty.add(btnP3,0,7);
+			gpParty.add(new Label(DataMiners.pTable[2].name),1,7);
+			gpParty.add(btnP4,0,8);
+			gpParty.add(new Label(DataMiners.pTable[3].name),1,8);
 			
-			gpItem.setPadding(new Insets(10, 10, 10, 10));
-			gpItem.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
+			gpParty.setPadding(new Insets(10, 10, 10, 10));
+			gpParty.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
 			
-			Scene sceneI = new Scene(gpItem,320,150);
+			Scene sceneP = new Scene(gpParty,320,320);
 
-			changePartyWindow.setTitle("Items");
+			changePartyWindow.setTitle("Place them where?");
 			changePartyWindow.setResizable(false);
 			changePartyWindow.setAlwaysOnTop(true);
-			changePartyWindow.setScene(sceneI);
+			changePartyWindow.setScene(sceneP);
 			changePartyWindow.show();
 		}
 		else{

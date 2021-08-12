@@ -22,17 +22,17 @@ import java.util.*;
 	-TOWNS:
 		-SPRITES (6/6) (DONE)
 		-TEXT (1/5)
-		-MAP FUNCTIONALITY 
+		-MAP FUNCTIONALITY (DONE)
 		-ABILITY TO CHANGE PARTY MEMBERS (DONE)
 	-MAP:
-		-SPRITES
-		-TEXT
-		-ABILITY INTERACTION
-		-COMBAT STARTING
+		-SPRITES (for the demo, we are done)
+		-TEXT (done)
+		-ABILITY INTERACTION (sadly will not do for now, maybe if there is extra time)
+		-COMBAT INTERACTION
 		-DUNGEONS
-			-SPRITES (0/10)
-			-EVENTS
-			-MAP INTERACTION
+			-SPRITES (3/10) (done for the demo)
+			-EVENTS (for the demo, done)
+			-MAP INTERACTION 
 	-COMBAT:
 		-SPRITES FOR ENEMIES (DONE)
 		-SPRITES FOR CHARACTERS (9/20) --Kook is making one, hound him.
@@ -45,7 +45,7 @@ import java.util.*;
 		-QUEST TAB (DONE)
 		-SETTINGS TAB (MIGHT DELETE IDK)
 		-EVENT LOG (DONE)
-		-MANUAL (FINISH THE MAP AND COMBAT ONES PLS THANKS)
+		-MANUAL (FINISH THE COMBAT ONES PLS THANKS)
 */
 
 public class DataMiners extends Application {   
@@ -86,6 +86,10 @@ public class DataMiners extends Application {
 	MenuBar menuBarCombat = new MenuBar();
 	MenuBar menuBarTown = new MenuBar();
 	MenuBar menuBarMap = new MenuBar();
+	Menu menuParty = new Menu("Party");
+	Menu menuItems = new Menu("Items");
+	Menu menuOther = new Menu("Other Tab");
+	Menu menuAbout = new Menu("About");
 	GridPane town = new GridPane();
 	VBox mainVBox = new VBox();
 	static HBox hboxEnemies = new HBox();
@@ -132,10 +136,6 @@ public class DataMiners extends Application {
 		questLog.setStyle("-fx-opacity: 1;");
 		
 		//-----------------COMBAT------------------
-		Menu menuParty = new Menu("Party");
-		Menu menuItems = new Menu("Items");
-		Menu menuOther = new Menu("Other Tab");
-		Menu menuAbout = new Menu("About");
 		MenuItem menuItemOther = new MenuItem("Open Others Tab");
 		MenuItem menuItemAbout = new MenuItem("About this Game");
 		menuItemOther.setOnAction(e -> otherWindow());
@@ -242,9 +242,18 @@ public class DataMiners extends Application {
 		});
 		
 		ugpuMap.setOnMouseClicked(e -> {
-			System.out.println("apples");
 			cTownName="UGPU";
+			eventLog.setText(eventLog.getText() + "\n-Arrived in United Graphics Processing Corporation");
 			cTown="ugpu";
+			mode="town";
+			modeMachine();
+		});
+		
+		
+		hardDriveMap.setOnMouseClicked(e -> {
+			cTownName="HardDriveton";
+			eventLog.setText(eventLog.getText() + "\n-Arrived in HardDriveton");
+			cTown="harddriveton";
 			mode="town";
 			modeMachine();
 		});
@@ -321,19 +330,7 @@ public class DataMiners extends Application {
 			quest(cTown);
 		});
 		
-		Label townName = new Label(cTownName);
-		townName.setFont(new Font(20.0));
 		
-		town.add(picForTown,0,0);
-		town.add(new Label(townInfo(cTown)),0,1);
-		town.add(townName,1,0);
-		town.add(btnVisit,1,2);
-		town.add(btnQuest,0,2);
-		town.add(btnShop,1,3);
-		town.add(btnMap,1,4);
-		town.setVgap(4);
-		town.setHgap(4);
-		town.setPadding(new Insets(0, 20, 20, 20));
 		
 		//-------------------INTRO SCENE--------------
 		btnIntro.setOnAction(e -> {
@@ -383,17 +380,40 @@ public class DataMiners extends Application {
 				mainVBox.getChildren().addAll(picForCutscene,textForCutscene1,textForCutscene2,textForCutscene3,btnIntro);
 				break;
 			case "combat":
+				menuBarCombat.getMenus().removeAll(menuParty,menuItems,menuAbout);
+				menuBarCombat.getMenus().addAll(menuParty,menuItems,menuAbout);
 				mainVBox.getChildren().addAll(menuBarCombat,hboxEnemies,combatLog);
 				break;
-			case "town":		
-				mainVBox.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
+			case "town":
+				town.getChildren().clear();
+				
+				Label townName = new Label(cTownName);
+				townName.setFont(new Font(20.0));
+				
 				picForTown = new ImageView(new Image("/images/locations/" + cTown + ".png"));
+				
+				town.add(picForTown,0,0);
+				town.add(new Label(townInfo(cTown)),0,1);
+				town.add(townName,1,0);
+				town.add(btnVisit,1,2);
+				town.add(btnQuest,0,2);
+				town.add(btnShop,1,3);
+				town.add(btnMap,1,4);
+				town.setVgap(4);
+				town.setHgap(4);
+				town.setPadding(new Insets(0, 20, 20, 20));
+			
+				menuBarTown.getMenus().removeAll(menuParty,menuItems,menuOther,menuAbout);
+				menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
+				mainVBox.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
 				mainVBox.getChildren().addAll(menuBarTown,town);
 				break;
 			case "visit":
 				mainVBox.getChildren().addAll(picForCutscene,textForCutscene1,textForCutscene2,textForCutscene3,btnIntro);
 				break;
 			case "map":
+				menuBarMap.getMenus().removeAll(menuParty,menuOther,menuAbout);
+				menuBarMap.getMenus().addAll(menuParty,menuOther,menuAbout);	
 				mainVBox.getChildren().addAll(menuBarMap, mapSP);
 				break;
 		}
@@ -875,7 +895,7 @@ public class DataMiners extends Application {
 	public void otherWindow(){
 		//VBox vbox2 = new VBox();
 		
-		TextArea ta1 = new TextArea("DataMiners is a somewhat complicated game.\nThe goal is to take your party of 4 (or more if you find people willing to join\nyour cause ;] ) and take down the virus that has recently got onto your \ncomputer.\n\nGENERAL CONTROLS:\n Party Tab - This tab has the windows for each party member you have\nactive. It also has the CHANGE command, which allows you \nto change your party members as you see fit. Just click on their\nprofile picture and select where you want them to be. \n\nNOTE: YOU CAN ONLY CHANGE PARTY MEMBERS IN A TOWN.\n\nTOWN CONTROLS:\nVisit - visit the town's center to see if there is anything of use there.\nShop - Visit the town's shop and buy things!\nMap - Open the town's map and access a new location!\n\nITEM CONTROLS:\nTo access an item, simply click on it. \nAlternatively, you can press the 'use first item' button,\nwhich will use the first usable item.\n\nYou have a max of 25 items, and some items cannot be used.\n\nMAP CONTROLS:\nthis is where the map controls will go.\n\nCOMBAT CONTROLS:\nThis is where the combat controls will go.\n\nThank you for playing DataMiners, have a nice day!");
+		TextArea ta1 = new TextArea("DataMiners is a somewhat complicated game.\nThe goal is to take your party of 4 (or more if you find people willing to join\nyour cause ;] ) and take down the virus that has recently got onto your \ncomputer.\n\nGENERAL CONTROLS:\n Party Tab - This tab has the windows for each party member you have\nactive. It also has the CHANGE command, which allows you \nto change your party members as you see fit. Just click on their\nprofile picture and select where you want them to be. \n\nNOTE: YOU CAN ONLY CHANGE PARTY MEMBERS IN A TOWN.\n\nTOWN CONTROLS:\nVisit - visit the town's center to see if there is anything of use there.\nShop - Visit the town's shop and buy things!\nMap - Open the town's map and access a new location!\n\nITEM CONTROLS:\nTo access an item, simply click on it. \nAlternatively, you can press the 'use first item' button,\nwhich will use the first usable item.\n\nYou have a max of 25 items, and some items cannot be used.\n\nMAP CONTROLS:\nMoving in the map is very easy, simply click somewhere to move. \nIf you hit one of the brown tiles, you'll enter a town! \nIf you enter a red tile, you'll enter a dungeon!\n\nBe careful however, as you can enter\ncombat while travelling!\n\nCOMBAT CONTROLS:\nThis is where the combat controls will go.\n\nThank you for playing DataMiners, have a nice day!");
 		ta1.setEditable(false);
 		ta1.setStyle("-fx-opacity: 1;");
 		Tab howToPlayTab = new Tab("Manual",ta1);
