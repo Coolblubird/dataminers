@@ -10,6 +10,7 @@ import javafx.scene.image.*;
 import java.util.*;
 
 public class Dungeon {
+	static Random randomizer = new Random();
 	String name;
 	String fileName;
 	int events;
@@ -29,7 +30,7 @@ public class Dungeon {
 		if (d.tempEvents>0){
 			GridPane gpEvent = new GridPane();
 			Stage eventWindow = new Stage();
-			int event = ((int)Math.random())*5;
+			int event = randomizer.nextInt(5);
 			
 			switch (d.name) {
 				case "trashbin":
@@ -40,7 +41,7 @@ public class Dungeon {
 								gpEvent.add(new Label("\tStray Code"),0,1);
 							}
 							else{
-								DataMiners.combat(1,2,1,0);
+								DataMiners.combat(1,2,1);
 								eventWindow.close();
 							}
 							break;
@@ -58,7 +59,7 @@ public class Dungeon {
 								gpEvent.add(new Label("\tNavyWindCO and co."),0,1);
 							}
 							else{
-								DataMiners.combat(1,2,1,0);
+								DataMiners.combat(1,4,1);
 								eventWindow.close();
 							}
 							break;
@@ -68,7 +69,7 @@ public class Dungeon {
 								gpEvent.add(new Label("\tHauntedCode"),0,1);
 							}
 							else{
-								DataMiners.combat(1,2,1,0);
+								DataMiners.combat(2,2,0);
 								eventWindow.close();
 							}
 							break;
@@ -82,7 +83,7 @@ public class Dungeon {
 			btnP1.setOnAction(e -> {
 				switch (event) {
 					case 0:
-						DataMiners.combat(1,2,1,0);
+						DataMiners.combat(1,2,1);
 						break;
 					case 1:
 						DataMiners.itemsOnPerson.add(new Item("HealingPotion",false,1,10));
@@ -91,10 +92,10 @@ public class Dungeon {
 						DataMiners.itemsOnPerson.add(new Item("AttackFruit",false,2,5));
 						break;
 					case 3:
-						DataMiners.combat(1,2,1,0);
+						DataMiners.combat(1,4,1);
 						break;
 					case 4:
-						DataMiners.combat(1,2,1,0);
+						DataMiners.combat(2,2,0);
 						break;
 						
 				}

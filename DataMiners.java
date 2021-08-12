@@ -49,6 +49,7 @@ import java.util.*;
 */
 
 public class DataMiners extends Application {   
+	Random rand = new Random();
 	static PartyMember[] pTable = new PartyMember[4];
 	ArrayList<PartyMember> charUnlocked = new ArrayList<PartyMember>();
 	static Enemy[] eCombatTable = new Enemy[4];
@@ -78,6 +79,7 @@ public class DataMiners extends Application {
 	//various variables
 	static ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
 	static String mode = "intro";
+	static String tempMode = "";
 	String cTown = "ugpu";
 	String cTownName = "UGPU";
 	String cQuest = "N/A";
@@ -91,6 +93,7 @@ public class DataMiners extends Application {
 	Menu menuOther = new Menu("Other Tab");
 	Menu menuAbout = new Menu("About");
 	GridPane town = new GridPane();
+	GridPane combatGP = new GridPane();
 	VBox mainVBox = new VBox();
 	static HBox hboxEnemies = new HBox();
 	StackPane mapSP = new StackPane();
@@ -135,17 +138,19 @@ public class DataMiners extends Application {
 		questLog.setEditable(false);
 		questLog.setStyle("-fx-opacity: 1;");
 		
-		//-----------------COMBAT------------------
 		MenuItem menuItemOther = new MenuItem("Open Others Tab");
 		MenuItem menuItemAbout = new MenuItem("About this Game");
 		menuItemOther.setOnAction(e -> otherWindow());
 		menuItemAbout.setOnAction(e-> aboutWindow());
 		menuOther.getItems().add(menuItemOther);
 		menuAbout.getItems().add(menuItemAbout);
-		
 		menuBarCombat.getMenus().addAll(menuParty,menuItems,menuAbout);
 		menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
 		menuBarMap.getMenus().addAll(menuParty,menuOther,menuAbout);
+		
+		
+		//-----------------COMBAT------------------
+		
 
 		//items tab
 		MenuItem menuItemUseFirst = new MenuItem("Use First Item");
@@ -236,8 +241,12 @@ public class DataMiners extends Application {
 		//move plr
 		mapPane.setOnMouseClicked(e -> {
 			if (e.getY() > 76 && e.getY() < 628){
-				
 				plrMap.relocate(e.getX()-16,e.getY()-24);
+				if (rand.nextInt(5)==1){
+					int battle = rand.nextInt(3);
+					combat2(battle);
+					modeMachine();
+				}
 			}
 		});
 		
@@ -382,7 +391,21 @@ public class DataMiners extends Application {
 			case "combat":
 				menuBarCombat.getMenus().removeAll(menuParty,menuItems,menuAbout);
 				menuBarCombat.getMenus().addAll(menuParty,menuItems,menuAbout);
-				mainVBox.getChildren().addAll(menuBarCombat,hboxEnemies,combatLog);
+				
+				ImageView battleback = new ImageView(new Image(getBack()));
+				
+				combatSP.getChildren().addAll(battleback,combatGP)
+				
+				combatGP.getChildren().clear();
+				combatGP.add(hboxEnemies,0,0);
+				combatGP.add(combatLog,0,1);
+				combatGP.setVgap(4);
+				combatGP.setHgap(4);
+				combatGP.setAlignment(Pos.BOTTOM_CENTER);
+				
+				mainVBox.setSpacing(50.0);
+				mainVBox.setBackground(new Background(new BackgroundFill(Color.CRIMSON, CornerRadii.EMPTY, Insets.EMPTY)));
+				mainVBox.getChildren().addAll(menuBarCombat,combatSP);
 				break;
 			case "town":
 				town.getChildren().clear();
@@ -401,21 +424,33 @@ public class DataMiners extends Application {
 				town.add(btnMap,1,4);
 				town.setVgap(4);
 				town.setHgap(4);
-				town.setPadding(new Insets(0, 20, 20, 20));
-			
+				
+				mainVBox.setSpacing(0.0);
 				menuBarTown.getMenus().removeAll(menuParty,menuItems,menuOther,menuAbout);
 				menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
 				mainVBox.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
 				mainVBox.getChildren().addAll(menuBarTown,town);
 				break;
 			case "visit":
+				mainVBox.setSpacing(0.0);
+				mainVBox.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 				mainVBox.getChildren().addAll(picForCutscene,textForCutscene1,textForCutscene2,textForCutscene3,btnIntro);
 				break;
 			case "map":
+				mainVBox.setSpacing(0.0);
 				menuBarMap.getMenus().removeAll(menuParty,menuOther,menuAbout);
 				menuBarMap.getMenus().addAll(menuParty,menuOther,menuAbout);	
 				mainVBox.getChildren().addAll(menuBarMap, mapSP);
 				break;
+		}
+	}
+	
+	String getBack(){
+		if (tempMode=="map"){
+			return "/images/battlebacks/map.png";
+		}
+		else{
+			return "/images/battlebacks/blank.png";
 		}
 	}
 	
@@ -462,14 +497,28 @@ public class DataMiners extends Application {
 		}
 	}
 	
-	static void combat(int e1, int e2, int e3, int e4){
+	//preset encounters, like on the map
+	void combat2(int random){
+		switch (random){
+			case 0:
+				combat(1, 2, 0);
+				break;
+			case 1:
+				combat(3, 4, 1);
+				break;
+			case 2:
+				combat(4, 1, 1);
+		}
+	}
+	
+	static void combat(int e1, int e2, int e3){
 		Enemy temp1 = enemyList.get(e1);
 		Enemy temp2 = enemyList.get(e2);
 		Enemy temp3 = enemyList.get(e3);
-		Enemy temp4 = enemyList.get(e4);
 		
-		mode="combat";
-		hboxEnemies.getChildren().addAll(new ImageView(temp1.btleSpr),new ImageView(temp2.btleSpr),new ImageView(temp3.btleSpr),new ImageView(temp4.btleSpr));
+		tempMode = mode;
+		mode = "combat";
+		hboxEnemies.getChildren().addAll(new ImageView(temp1.btleSpr),new ImageView(temp2.btleSpr),new ImageView(temp3.btleSpr));
 	}
 	
 	void visit(String currentTown){
