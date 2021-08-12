@@ -13,23 +13,23 @@ public class Dungeon {
 	String name;
 	String fileName;
 	int events;
-	Image itemSpr;
+	Image placeSpr;
 	int tempEvents;
 	
 	Dungeon(String newName, int maxEvents){
 		this.name = newName;
 		this.fileName = newName.toLowerCase().trim();
 		this.events = maxEvents;
-		this.itemSpr = new Image("/images/items/" + this.fileName + ".PNG");
+		this.placeSpr = new Image("/images/locations/map/" + this.fileName + ".png");
 		this.tempEvents = this.events;
 	}
 	
 	//utrigger event (DO LATER)
 	static void event(Dungeon d){
-		if (this.events>0){
+		if (d.tempEvents>0){
 			GridPane gpEvent = new GridPane();
 			Stage eventWindow = new Stage();
-			int event = Math.random()*5;
+			int event = ((int)Math.random())*5;
 			
 			switch (d.name) {
 				case "trashbin":
@@ -90,6 +90,12 @@ public class Dungeon {
 					case 2:
 						DataMiners.itemsOnPerson.add(new Item("AttackFruit",false,2,5));
 						break;
+					case 3:
+						DataMiners.combat(1,2,1,0);
+						break;
+					case 4:
+						DataMiners.combat(1,2,1,0);
+						break;
 						
 				}
 				eventWindow.close();
@@ -111,13 +117,14 @@ public class Dungeon {
 			eventWindow.setTitle("Items");
 			eventWindow.setResizable(false);
 			eventWindow.setAlwaysOnTop(true);
-			eventWindow.setScene(sceneI);
+			eventWindow.setScene(sceneE);
 			eventWindow.show();
 			
 			
 		}
 		else{
 			/*
+			register quests:
 			dungeon names:
 			-The Deep Web
 			-The Center of the Virus

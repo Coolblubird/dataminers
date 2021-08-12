@@ -63,7 +63,7 @@ public class DataMiners extends Application {
 	PartyMember kyzu = new PartyMember("Kyzu", 15, 2, 10, 10, "Kōgeki", "Hashiru", "En'eki");
 	
 	//enemies, name, atk, def, hp
-	ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
+	static ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
 	Enemy blank = new Enemy("blank",0,0,0);
 	
 	//UGPU enemies
@@ -72,9 +72,12 @@ public class DataMiners extends Application {
 	Enemy hauntedCode = new Enemy("HauntedCode",6,1,7);
 	Enemy navyWindCO = new Enemy("NavyWindCO",1,5,10);
 	
+	//dungeon
+	Dungeon trashBin = new Dungeon("TrashBin",3);
+	
 	//various variables
 	static ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
-	String mode = "intro";
+	static String mode = "intro";
 	String cTown = "ugpu";
 	String cTownName = "UGPU";
 	String cQuest = "N/A";
@@ -85,7 +88,7 @@ public class DataMiners extends Application {
 	MenuBar menuBarMap = new MenuBar();
 	GridPane town = new GridPane();
 	VBox mainVBox = new VBox();
-	HBox hboxEnemies = new HBox();
+	static HBox hboxEnemies = new HBox();
 	StackPane mapSP = new StackPane();
 	Label textForCutscene1 = new Label("This, is a computer. ");
 	Label textForCutscene2 = new Label("It may be exactly like yours, or it may not.");
@@ -101,8 +104,10 @@ public class DataMiners extends Application {
 	int textIntro = 0;
 	boolean visitGPUFirst = false;
 	boolean quest1complete = false;
+	boolean shopUnlocked = false;
 	static boolean inCombat = false;
 	static boolean pTurn = true;
+	static boolean inDungeon = false;
 	TextArea eventLog = new TextArea("This is where events will pile up as you play:");
 	TextArea questLog = new TextArea(cQuest + "\n" + cQuestInfo);
 	TextArea combatLog = new TextArea("Initiated Combat!");
@@ -260,7 +265,29 @@ public class DataMiners extends Application {
 		});
 		
 		btnShop.setOnAction(e -> {
-			shop(cTown);
+			if (shopUnlocked==true){
+				shop(cTown);
+			}
+			else{
+				VBox vItem = new VBox();
+				Label errorLabel = new Label("No one seems to be here...?");
+				Button btnMyBad = new Button("Huh?");
+				Stage errorWindow = new Stage();
+				
+				btnMyBad.setOnAction(p -> {
+					errorWindow.close();
+				});
+				
+				vItem.getChildren().addAll(errorLabel,btnMyBad);
+				vItem.setAlignment(Pos.TOP_CENTER);
+				
+				Scene sceneI = new Scene(vItem,250,60);
+				errorWindow.setTitle("Shop?");
+				errorWindow.setResizable(false);
+				errorWindow.setAlwaysOnTop(true);
+				errorWindow.setScene(sceneI);
+				errorWindow.show();
+			}
 		});
 		
 		btnMap.setOnAction(e->{
@@ -415,13 +442,13 @@ public class DataMiners extends Application {
 		}
 	}
 	
-	void combat(int e1, int e2, int e3, int e4){
-		mode="combat";
+	static void combat(int e1, int e2, int e3, int e4){
 		Enemy temp1 = enemyList.get(e1);
 		Enemy temp2 = enemyList.get(e2);
 		Enemy temp3 = enemyList.get(e3);
 		Enemy temp4 = enemyList.get(e4);
 		
+		mode="combat";
 		hboxEnemies.getChildren().addAll(new ImageView(temp1.btleSpr),new ImageView(temp2.btleSpr),new ImageView(temp3.btleSpr),new ImageView(temp4.btleSpr));
 	}
 	
