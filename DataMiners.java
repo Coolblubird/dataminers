@@ -97,6 +97,7 @@ public class DataMiners extends Application {
 	VBox mainVBox = new VBox();
 	static HBox hboxEnemies = new HBox();
 	StackPane mapSP = new StackPane();
+	StackPane combatSP = new StackPane();
 	Label textForCutscene1 = new Label("This, is a computer. ");
 	Label textForCutscene2 = new Label("It may be exactly like yours, or it may not.");
 	Label textForCutscene3 = new Label("");
@@ -392,9 +393,9 @@ public class DataMiners extends Application {
 				menuBarCombat.getMenus().removeAll(menuParty,menuItems,menuAbout);
 				menuBarCombat.getMenus().addAll(menuParty,menuItems,menuAbout);
 				
+				combatSP.getChildren().clear();
 				ImageView battleback = new ImageView(new Image(getBack()));
-				
-				combatSP.getChildren().addAll(battleback,combatGP)
+				combatSP.getChildren().addAll(battleback,combatGP);
 				
 				combatGP.getChildren().clear();
 				combatGP.add(hboxEnemies,0,0);
@@ -403,7 +404,7 @@ public class DataMiners extends Application {
 				combatGP.setHgap(4);
 				combatGP.setAlignment(Pos.BOTTOM_CENTER);
 				
-				mainVBox.setSpacing(50.0);
+				//mainVBox.setSpacing(50.0);
 				mainVBox.setBackground(new Background(new BackgroundFill(Color.CRIMSON, CornerRadii.EMPTY, Insets.EMPTY)));
 				mainVBox.getChildren().addAll(menuBarCombat,combatSP);
 				break;
