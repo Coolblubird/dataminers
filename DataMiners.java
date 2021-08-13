@@ -110,8 +110,6 @@ public class DataMiners extends Application {
 	Button btnQuest = new Button("Quest");
 	Button btnAcceptQuest = new Button("Accept");
 	int textIntro = 0;
-	int target = 0;
-	int attackMode=0;
 	int currentTurn=0;
 	boolean visitGPUFirst = false;
 	boolean quest1complete = false;
@@ -877,8 +875,7 @@ public class DataMiners extends Application {
 			if(mode=="combat") {
 				//register attack
 				if (currentTurn==id){
-					attackMode=0;
-					runAttack();
+					runAttack(0);
 					
 					int newX = (int)pWindow.getX();
 					int newY = (int)pWindow.getY();
@@ -897,9 +894,8 @@ public class DataMiners extends Application {
 			if(mode=="combat") {
 				//register attack
 				if (currentTurn==id){
-					attackMode=1;
-					runAttack();
-					
+					runAttack(1);
+				
 					int newX = (int)pWindow.getX();
 					int newY = (int)pWindow.getY();
 					pWindow.close();
@@ -917,8 +913,7 @@ public class DataMiners extends Application {
 			if(mode=="combat") {
 				//register attack
 				if (currentTurn==id){
-					attackMode=2;
-					runAttack();
+					runAttack(2);	
 					
 					int newX = (int)pWindow.getX();
 					int newY = (int)pWindow.getY();
@@ -964,8 +959,7 @@ public class DataMiners extends Application {
 			if(mode=="combat") {
 				//register attack
 				if (currentTurn==id){
-					attackMode=0;
-					runAttack();
+					runAttack(0);
 					
 					int newX = (int)pWindow.getX();
 					int newY = (int)pWindow.getY();
@@ -984,8 +978,7 @@ public class DataMiners extends Application {
 			if(mode=="combat") {
 				//register attack
 				if (currentTurn==id){
-					attackMode=1;
-					runAttack();
+					runAttack(1);
 					
 					int newX = (int)pWindow.getX();
 					int newY = (int)pWindow.getY();
@@ -1004,8 +997,7 @@ public class DataMiners extends Application {
 			if(mode=="combat") {
 				//register attack
 				if (currentTurn==id){
-					attackMode=2;
-					runAttack();
+					runAttack(2);
 					
 					int newX = (int)pWindow.getX();
 					int newY = (int)pWindow.getY();
@@ -1128,7 +1120,47 @@ public class DataMiners extends Application {
 		}
 	}
 	
-	void runAttack(){
+	void runAttack(int attackMode){
+		GridPane gpChoose = new GridPane();
+		Stage chooseWindow = new Stage();
+		
+		Button btnP1 = new Button(eCombatTable[0].name);
+		Button btnP2 = new Button(eCombatTable[1].name);
+		Button btnP3 = new Button(eCombatTable[2].name);
+		
+		btnP1.setOnAction(e -> {
+			attack(attackMode, 0);
+			chooseWindow.close();
+		});
+		btnP2.setOnAction(e -> {
+			attack(attackMode, 1);
+			chooseWindow.close();
+		});
+		btnP3.setOnAction(e -> {
+			attack(attackMode, 2);
+			chooseWindow.close();
+		});
+		
+		gpChoose.add(new Label("Who will you Target?"),0,0);
+		gpChoose.add(btnP1,0,1);
+		gpChoose.add(btnP2,0,2);
+		gpChoose.add(btnP3,0,3);
+		
+		gpChoose.setPadding(new Insets(10, 10, 10, 10));
+		gpChoose.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
+		
+		Scene sceneI = new Scene(gpChoose,320,150);
+		
+		chooseWindow.setOnCloseRequest(e -> e.consume());
+
+		chooseWindow.setTitle("Choose Target");
+		chooseWindow.setResizable(false);
+		chooseWindow.setAlwaysOnTop(true);
+		chooseWindow.setScene(sceneI);
+		chooseWindow.show();
+	}
+	
+	void attack(int attackMode,int target){
 		switch(attackMode){
 			case 0:
 				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " Dealt " + pTable[currentTurn].atk + " to " + eCombatTable[target].name + "!");
@@ -1151,10 +1183,6 @@ public class DataMiners extends Application {
 				combatLog.setText(combatLog.getText() + "\n" + eCombatTable[currentTurn].name + " Dealt " + eCombatTable[currentTurn].atk + " to " + pTable[variable].name + "!");
 			}
 			
-			currentTurn++;
-			combatLog.setText(combatLog.getText() + "\nIt is now " + pTable[currentTurn].name + "'s Turn!");
-		}
-		else if (currentTurn==3){
 			currentTurn++;
 			combatLog.setText(combatLog.getText() + "\nIt is now " + pTable[currentTurn].name + "'s Turn!");
 		}
