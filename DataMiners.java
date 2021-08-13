@@ -52,7 +52,7 @@ public class DataMiners extends Application {
 	Random rand = new Random();
 	static PartyMember[] pTable = new PartyMember[4];
 	ArrayList<PartyMember> charUnlocked = new ArrayList<PartyMember>();
-	static Enemy[] eCombatTable = new Enemy[4];
+	static Enemy[] eCombatTable = new Enemy[3];
 	
 	//starting characters, name, atk, def, explor, hp, dmg attack, support atk, exploration atk
 	PartyMember caulder = new PartyMember("Caulder", 3, 5, 10, 20, "Endure", "Heal", "Map");
@@ -110,11 +110,13 @@ public class DataMiners extends Application {
 	Button btnQuest = new Button("Quest");
 	Button btnAcceptQuest = new Button("Accept");
 	int textIntro = 0;
+	int target = 0;
+	int attackMode=0;
+	int currentTurn=0;
 	boolean visitGPUFirst = false;
 	boolean quest1complete = false;
 	boolean shopUnlocked = false;
 	static boolean inCombat = false;
-	static boolean pTurn = true;
 	static boolean inDungeon = false;
 	TextArea eventLog = new TextArea("This is where events will pile up as you play:");
 	TextArea questLog = new TextArea(cQuest + "\n" + cQuestInfo);
@@ -149,29 +151,6 @@ public class DataMiners extends Application {
 		menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
 		menuBarMap.getMenus().addAll(menuParty,menuOther,menuAbout);
 		
-		
-		//-----------------COMBAT------------------
-		
-
-		//items tab
-		MenuItem menuItemUseFirst = new MenuItem("Use First Item");
-		menuItems.getItems().add(menuItemUseFirst);
-
-		menuItemUseFirst.setOnAction(e -> {
-			//use the first usable item in the players inventory
-			Item temp;
-			
-			for (int i=0; i<itemsOnPerson.size(); i++){
-				if (itemsOnPerson.get(i).isKey == false){
-					//USE THE ITEM
-					temp = itemsOnPerson.get(i);
-					Item.useItem(temp);
-					itemsOnPerson.remove(itemsOnPerson.get(i));
-					break;
-				}
-			}
-		});
-		
 		//party tab
 		MenuItem menuItemChange = new MenuItem("Change Party Members");
 		menuParty.getItems().add(menuItemChange);
@@ -205,22 +184,22 @@ public class DataMiners extends Application {
 		MenuItem menuItemP1 = new MenuItem("Party Member Slot 1");
 		menuParty.getItems().add(menuItemP1);
 		
-		menuItemP1.setOnAction(e -> partyWindow(pTable[0]));
+		menuItemP1.setOnAction(e -> partyWindow(pTable[0], 0));
 		
 		MenuItem menuItemP2 = new MenuItem("Party Member Slot 2");
 		menuParty.getItems().add(menuItemP2);
 		
-		menuItemP2.setOnAction(e -> partyWindow(pTable[1]));
+		menuItemP2.setOnAction(e -> partyWindow(pTable[1], 1));
 		
 		MenuItem menuItemP3 = new MenuItem("Party Member Slot 3");
 		menuParty.getItems().add(menuItemP3);
 		
-		menuItemP3.setOnAction(e -> partyWindow(pTable[2]));
+		menuItemP3.setOnAction(e -> partyWindow(pTable[2], 2));
 				
 		MenuItem menuItemP4 = new MenuItem("Party Member Slot 4");
 		menuParty.getItems().add(menuItemP4);
 		
-		menuItemP4.setOnAction(e -> partyWindow(pTable[3]));
+		menuItemP4.setOnAction(e -> partyWindow(pTable[3], 3));
 		
 		//-------------------MAP----------------------
 		ImageView mapBack = new ImageView(new Image("/images/map.PNG"));
@@ -246,6 +225,7 @@ public class DataMiners extends Application {
 				if (rand.nextInt(5)==1){
 					int battle = rand.nextInt(3);
 					combat2(battle);
+					mode="combat";
 					modeMachine();
 				}
 			}
@@ -273,6 +253,25 @@ public class DataMiners extends Application {
 		
 		
 		//-------------------EXTRAS TAB---------------
+		//items tab
+		MenuItem menuItemUseFirst = new MenuItem("Use First Item");
+		menuItems.getItems().add(menuItemUseFirst);
+
+		menuItemUseFirst.setOnAction(e -> {
+			//use the first usable item in the players inventory
+			Item temp;
+			
+			for (int i=0; i<itemsOnPerson.size(); i++){
+				if (itemsOnPerson.get(i).isKey == false){
+					//USE THE ITEM
+					temp = itemsOnPerson.get(i);
+					Item.useItem(temp);
+					itemsOnPerson.remove(itemsOnPerson.get(i));
+					break;
+				}
+			}
+		});
+		
 		MenuItem menuItemItems = new MenuItem("Items");
 		menuItems.getItems().add(menuItemItems);
 
@@ -397,6 +396,10 @@ public class DataMiners extends Application {
 				ImageView battleback = new ImageView(new Image(getBack()));
 				combatSP.getChildren().addAll(battleback,combatGP);
 				
+				currentTurn=0;
+				
+				combatLog = new TextArea("Initallized Combat!\nIt is now " + pTable[0].name + "'s Turn!");
+			
 				combatGP.getChildren().clear();
 				combatGP.add(hboxEnemies,0,0);
 				combatGP.add(combatLog,0,1);
@@ -456,46 +459,7 @@ public class DataMiners extends Application {
 	}
 	
 	void registerButton(String ability){
-		switch (mode) {
-			case "combat":
-				//register attack
-				if (pTurn==true){
-					int tempValue = 0;
-					switch (ability) {
-						//attack abilities
-						case "Endure":
-						case "Fire!":
-						case "Slash":
-						case "Use Sword":
-						case "Kōgeki":
-							
-							break;
-						//Def abilities
-						case "Heal":
-						case "Cover!":
-						case "War Cry":
-						case "Use Shield":
-						case "Hashiru":
-						
-							break;
-						//Explore abilities
-						case "Map":
-						case "Capture!":
-						case "Scale":
-						case "Go There":
-						case "En'eki":
-						
-							break;
-					}
-				}
-				else {
-					combatLog.setText(combatLog.getText() + "It is not your turn, please wait.");
-				}
-				break;
-			case "town":
-				//register map movement
-				break;
-		}
+		
 	}
 	
 	//preset encounters, like on the map
@@ -516,6 +480,10 @@ public class DataMiners extends Application {
 		Enemy temp1 = enemyList.get(e1);
 		Enemy temp2 = enemyList.get(e2);
 		Enemy temp3 = enemyList.get(e3);
+		
+		eCombatTable[0] = temp1;
+		eCombatTable[1] = temp2;
+		eCombatTable[2] = temp3;
 		
 		tempMode = mode;
 		mode = "combat";
@@ -898,25 +866,69 @@ public class DataMiners extends Application {
 		newWindow.show();
 	}
 	
-	public void partyWindow(PartyMember p){
+	public void partyWindow(PartyMember p,int id){
 		GridPane gp2 = new GridPane();
+		
+		Stage pWindow = new Stage();
 		
 		Button bA1 = new Button(p.atk1);
 		
 		bA1.setOnAction(b -> {
-			registerButton(p.atk1);
+			if(mode=="combat") {
+				//register attack
+				if (currentTurn==id){
+					attackMode=0;
+					runAttack();
+					
+					int newX = (int)pWindow.getX();
+					int newY = (int)pWindow.getY();
+					pWindow.close();
+					partyWindow(p,id,newX,newY);
+				}
+				else {
+					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
+				}
+			}
 		});
 		
 		Button bA2 = new Button(p.atk2);
 		
 		bA2.setOnAction(b -> {
-			registerButton(p.atk2);
+			if(mode=="combat") {
+				//register attack
+				if (currentTurn==id){
+					attackMode=1;
+					runAttack();
+					
+					int newX = (int)pWindow.getX();
+					int newY = (int)pWindow.getY();
+					pWindow.close();
+					partyWindow(p,id,newX,newY);
+				}
+				else {
+					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
+				}
+			}
 		});
 		
 		Button bA3 = new Button(p.atk3);
 		
 		bA3.setOnAction(b -> {
-			registerButton(p.atk3);	
+			if(mode=="combat") {
+				//register attack
+				if (currentTurn==id){
+					attackMode=2;
+					runAttack();
+					
+					int newX = (int)pWindow.getX();
+					int newY = (int)pWindow.getY();
+					pWindow.close();
+					partyWindow(p,id,newX,newY);
+				}
+				else {
+					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
+				}
+			}
 		});
 		
 		ImageView pFacePlate = new ImageView(p.getFP());
@@ -935,7 +947,95 @@ public class DataMiners extends Application {
 		
 		Scene scene2 = new Scene(gp2,230,300);
 		
+		pWindow.setTitle(p.name);
+		pWindow.setScene(scene2);
+		pWindow.setResizable(false);
+		pWindow.show();
+	}
+
+	public void partyWindow(PartyMember p,int id, int x, int y){
+		GridPane gp2 = new GridPane();
+		
 		Stage pWindow = new Stage();
+		
+		Button bA1 = new Button(p.atk1);
+		
+		bA1.setOnAction(b -> {
+			if(mode=="combat") {
+				//register attack
+				if (currentTurn==id){
+					attackMode=0;
+					runAttack();
+					
+					int newX = (int)pWindow.getX();
+					int newY = (int)pWindow.getY();
+					pWindow.close();
+					partyWindow(p,id,newX,newY);
+				}
+				else {
+					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
+				}
+			}
+		});
+		
+		Button bA2 = new Button(p.atk2);
+		
+		bA2.setOnAction(b -> {
+			if(mode=="combat") {
+				//register attack
+				if (currentTurn==id){
+					attackMode=1;
+					runAttack();
+					
+					int newX = (int)pWindow.getX();
+					int newY = (int)pWindow.getY();
+					pWindow.close();
+					partyWindow(p,id,newX,newY);
+				}
+				else {
+					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
+				}
+			}
+		});
+		
+		Button bA3 = new Button(p.atk3);
+		
+		bA3.setOnAction(b -> {
+			if(mode=="combat") {
+				//register attack
+				if (currentTurn==id){
+					attackMode=2;
+					runAttack();
+					
+					int newX = (int)pWindow.getX();
+					int newY = (int)pWindow.getY();
+					pWindow.close();
+					partyWindow(p,id,newX,newY);
+				}
+				else {
+					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
+				}
+			}
+		});
+		
+		ImageView pFacePlate = new ImageView(p.getFP());
+		
+		gp2.add(pFacePlate,0,0);
+		gp2.add(bA1,1,2);
+		gp2.add(bA2,1,3);
+		gp2.add(bA3,1,4);
+		gp2.add(new Label("HP: \t" + p.chp + "/" + p.mhp),0,1);
+		gp2.add(new Label("ATK: \t" + p.atk),0,2);
+		gp2.add(new Label("DEF: \t" + p.def),0,3);
+		gp2.add(new Label("Explr: \t" + p.explr),0,4);
+		gp2.setVgap(10);
+		gp2.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
+		gp2.setPadding(new Insets(10, 10, 10, 10));
+		
+		Scene scene2 = new Scene(gp2,230,300);
+		
+		pWindow.setX(x);
+		pWindow.setY(y);
 		pWindow.setTitle(p.name);
 		pWindow.setScene(scene2);
 		pWindow.setResizable(false);
@@ -1025,6 +1125,51 @@ public class DataMiners extends Application {
 		}
 		else{
 			return "yeah.";
+		}
+	}
+	
+	void runAttack(){
+		switch(attackMode){
+			case 0:
+				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " Dealt " + pTable[currentTurn].atk + " to " + eCombatTable[target].name + "!");
+				eCombatTable[target].statsDown(0, pTable[currentTurn].atk);
+				break;
+			case 1:
+				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " healed " + pTable[currentTurn].atk + " to " + pTable[target].name + "!");
+				pTable[target].statsUp(0, pTable[currentTurn].atk);
+				break;
+			case 2:
+				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " Dealt " + pTable[currentTurn].atk + " to " + eCombatTable[target].name + "!");
+				eCombatTable[target].statsDown(0, pTable[currentTurn].atk);
+				break;
+		}
+		if (currentTurn<=2){
+			//run enemy, next turn
+			if(!eCombatTable[currentTurn].isKO()){
+				int variable = rand.nextInt(3); 
+				pTable[variable].statsDown(1, eCombatTable[currentTurn].atk);
+				combatLog.setText(combatLog.getText() + "\n" + eCombatTable[currentTurn].name + " Dealt " + eCombatTable[currentTurn].atk + " to " + pTable[variable].name + "!");
+			}
+			
+			currentTurn++;
+			combatLog.setText(combatLog.getText() + "\nIt is now " + pTable[currentTurn].name + "'s Turn!");
+		}
+		else if (currentTurn==3){
+			currentTurn++;
+			combatLog.setText(combatLog.getText() + "\nIt is now " + pTable[currentTurn].name + "'s Turn!");
+		}
+		else{
+			currentTurn=0;
+		}
+		
+		//if the party won or not
+		if (eCombatTable[0].isKO() && eCombatTable[1].isKO() && eCombatTable[2].isKO()) {
+			mode=tempMode;
+			modeMachine();
+		} 
+		else if (pTable[0].isKO() && pTable[1].isKO() && pTable[2].isKO() && pTable[3].isKO()){
+			mode="game over";
+			modeMachine();
 		}
 	}
 }
