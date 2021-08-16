@@ -1329,9 +1329,9 @@ public class DataMiners extends Application {
 		if (tempMode=="map"){
 			return "/images/battlebacks/map.png";
 		}
-		if (tempMode=="town"){
-			return "/images/battlebacks/town.png";
-		}
+		//if (tempMode=="town"){
+			//return "/images/battlebacks/town.png";
+		//}
 		else{
 			return "/images/battlebacks/blank.png";
 		}
