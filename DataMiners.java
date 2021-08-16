@@ -7,6 +7,7 @@ import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.geometry.*;
 import javafx.scene.image.*;
 import java.util.*;
@@ -31,21 +32,24 @@ import java.util.*;
 		-COMBAT INTERACTION
 		-DUNGEONS
 			-SPRITES (3/10) (done for the demo)
-			-EVENTS (for the demo, done)
+			-EVENTS 
 			-MAP INTERACTION 
 	-COMBAT:
 		-SPRITES FOR ENEMIES (DONE)
 		-SPRITES FOR CHARACTERS (9/20) --Kook is making one, hound him.
-		-ITEM FUNCIONALITY
-		-TEXT FOR HOW COMBAT IS GOING
-		-ABILITY INTERACTION
+		-ITEM FUNCIONALITY (DONE)
+		-TEXT FOR HOW COMBAT IS GOING (DONE)
+		-ABILITY INTERACTION (
 	-STORY: (KINDA DONE)
 		-YEAH YOU SHOULD PROBABLY WRITE THAT LMAO (OK KINDA DONE)
 	-OTHER TAB:
 		-QUEST TAB (DONE)
 		-SETTINGS TAB (MIGHT DELETE IDK)
 		-EVENT LOG (DONE)
-		-MANUAL (FINISH THE COMBAT ONES PLS THANKS)
+		-MANUAL (DONE)
+	-LOAD AND SAVE:
+		-Save AND Load BUTTON
+		-GAME OVER FUNCTIONALITY
 */
 
 public class DataMiners extends Application {   
@@ -78,7 +82,7 @@ public class DataMiners extends Application {
 	
 	//various variables
 	static ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
-	static String mode = "intro";
+	static String mode = "town";
 	static String tempMode = "";
 	String cTown = "ugpu";
 	String cTownName = "UGPU";
@@ -95,19 +99,25 @@ public class DataMiners extends Application {
 	GridPane town = new GridPane();
 	GridPane combatGP = new GridPane();
 	VBox mainVBox = new VBox();
+	VBox dungeonVBox = new VBox();
 	static HBox hboxEnemies = new HBox();
 	StackPane mapSP = new StackPane();
 	StackPane combatSP = new StackPane();
 	Label textForCutscene1 = new Label("This, is a computer. ");
 	Label textForCutscene2 = new Label("It may be exactly like yours, or it may not.");
 	Label textForCutscene3 = new Label("");
+	static ImageView cEnemyPic1;
+	static ImageView cEnemyPic2;
+	static ImageView cEnemyPic3;
 	ImageView picForCutscene = new ImageView(new Image("/images/cutscenes/intro-1.png"));
 	ImageView picForTown = new ImageView(new Image("/images/locations/" + cTown + ".png"));
+	ImageView picForDungeon = new ImageView(new Image("/images/locations/" + cTown + ".png"));
 	Button btnIntro = new Button("Next...");
 	Button btnVisit = new Button("Visit");
 	Button btnShop = new Button("Shop");
 	Button btnMap = new Button("Map");
 	Button btnQuest = new Button("Quest");
+	Button btnGO = new Button("Load Last Save");
 	Button btnAcceptQuest = new Button("Accept");
 	int textIntro = 0;
 	int currentTurn=0;
@@ -133,21 +143,7 @@ public class DataMiners extends Application {
 		
 		itemsOnPerson.add(new Item("HealingPotion",false,1,10));
 		
-		eventLog.setText(eventLog.getText() + "\n-Booted the program.");
-		eventLog.setEditable(false);
-		eventLog.setStyle("-fx-opacity: 1;");
-		questLog.setEditable(false);
-		questLog.setStyle("-fx-opacity: 1;");
 		
-		MenuItem menuItemOther = new MenuItem("Open Others Tab");
-		MenuItem menuItemAbout = new MenuItem("About this Game");
-		menuItemOther.setOnAction(e -> otherWindow());
-		menuItemAbout.setOnAction(e-> aboutWindow());
-		menuOther.getItems().add(menuItemOther);
-		menuAbout.getItems().add(menuItemAbout);
-		menuBarCombat.getMenus().addAll(menuParty,menuItems,menuAbout);
-		menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
-		menuBarMap.getMenus().addAll(menuParty,menuOther,menuAbout);
 		
 		//party tab
 		MenuItem menuItemChange = new MenuItem("Change Party Members");
@@ -199,6 +195,16 @@ public class DataMiners extends Application {
 		
 		menuItemP4.setOnAction(e -> partyWindow(pTable[3], 3));
 		
+		//-------------------COMBAT-------------------
+		combatLog.setEditable(false);
+		combatLog.setStyle("-fx-opacity: 1; -fx-font-size: 24px;");
+		hboxEnemies.setAlignment(Pos.CENTER);
+		
+		
+		//-------------------DUNGEON------------------
+		
+		
+		
 		//-------------------MAP----------------------
 		ImageView mapBack = new ImageView(new Image("/images/map.PNG"));
 		
@@ -229,6 +235,7 @@ public class DataMiners extends Application {
 			}
 		});
 		
+		//towns
 		ugpuMap.setOnMouseClicked(e -> {
 			cTownName="UGPU";
 			eventLog.setText(eventLog.getText() + "\n-Arrived in United Graphics Processing Corporation");
@@ -246,11 +253,37 @@ public class DataMiners extends Application {
 			modeMachine();
 		});
 		
+		//dungeons
+		trashBinMap.setOnMouseClicked(e -> {
+			cTown="trashbin";
+			cTownName="The Trash Bin";
+			eventLog.setText(eventLog.getText() + "\n-Arrived in the TrashBin dungeon!");
+			mode="dungeon";
+			modeMachine();
+		});
+		
 		mapPane.getChildren().addAll(ugpuMap,trashBinMap,hardDriveMap,plrMap);
 		mapSP.getChildren().addAll(mapBack,mapPane);
 		
 		
 		//-------------------EXTRAS TAB---------------
+		//extras tab and about tab
+		eventLog.setText(eventLog.getText() + "\n-Booted the program.");
+		eventLog.setEditable(false);
+		eventLog.setStyle("-fx-opacity: 1;");
+		questLog.setEditable(false);
+		questLog.setStyle("-fx-opacity: 1;");
+		
+		MenuItem menuItemOther = new MenuItem("Open Others Tab");
+		MenuItem menuItemAbout = new MenuItem("About this Game");
+		menuItemOther.setOnAction(e -> otherWindow());
+		menuItemAbout.setOnAction(e-> aboutWindow());
+		menuOther.getItems().add(menuItemOther);
+		menuAbout.getItems().add(menuItemAbout);
+		menuBarCombat.getMenus().addAll(menuParty,menuItems,menuAbout);
+		menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
+		menuBarMap.getMenus().addAll(menuParty,menuOther,menuAbout);
+		
 		//items tab
 		MenuItem menuItemUseFirst = new MenuItem("Use First Item");
 		menuItems.getItems().add(menuItemUseFirst);
@@ -394,10 +427,17 @@ public class DataMiners extends Application {
 				ImageView battleback = new ImageView(new Image(getBack()));
 				combatSP.getChildren().addAll(battleback,combatGP);
 				
+				cEnemyPic1.setVisible(true);
+				cEnemyPic2.setVisible(true);
+				cEnemyPic3.setVisible(true);
+				
 				currentTurn=0;
 				
 				combatLog = new TextArea("Initallized Combat!\nIt is now " + pTable[0].name + "'s Turn!");
-			
+				combatLog.setEditable(false);
+				combatLog.setPrefColumnCount(25);
+				combatLog.setStyle("-fx-opacity: 1; -fx-font-size: 1.5em;");
+				
 				combatGP.getChildren().clear();
 				combatGP.add(hboxEnemies,0,0);
 				combatGP.add(combatLog,0,1);
@@ -412,13 +452,13 @@ public class DataMiners extends Application {
 			case "town":
 				town.getChildren().clear();
 				
-				Label townName = new Label(cTownName);
+				Text townName = new Text(cTownName);
 				townName.setFont(new Font(20.0));
 				
 				picForTown = new ImageView(new Image("/images/locations/" + cTown + ".png"));
 				
 				town.add(picForTown,0,0);
-				town.add(new Label(townInfo(cTown)),0,1);
+				town.add(new Text(townInfo(cTown)),0,1);
 				town.add(townName,1,0);
 				town.add(btnVisit,1,2);
 				town.add(btnQuest,0,2);
@@ -444,24 +484,33 @@ public class DataMiners extends Application {
 				menuBarMap.getMenus().addAll(menuParty,menuOther,menuAbout);	
 				mainVBox.getChildren().addAll(menuBarMap, mapSP);
 				break;
+			case "dungeon":
+				dungeonVBox.getChildren().clear();
+				
+				Text dungeonName = new Text(cTownName);
+				dungeonName.setFont(new Font(20.0));
+				
+				picForDungeon = new ImageView(new Image("/images/locations/" + cTown + ".png"));
+				
+				dungeonVBox.getChildren().addAll(picForDungeon, new Text(townInfo(cTown)), dungeonName, btnVisit, btnMap);
+				
+				mainVBox.setSpacing(0.0);
+				menuBarTown.getMenus().removeAll(menuParty,menuItems,menuOther,menuAbout);
+				menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
+				mainVBox.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
+				mainVBox.getChildren().addAll(menuBarTown,dungeonVBox);
+				break;
+			case "gameover":
+				mainVBox.setSpacing(0.0);
+				mainVBox.getChildren().addAll(new ImageView(new Image("/images/game over.png")), btnGO);
+				break;
 		}
 	}
 	
-	String getBack(){
-		if (tempMode=="map"){
-			return "/images/battlebacks/map.png";
-		}
-		else{
-			return "/images/battlebacks/blank.png";
-		}
-	}
 	
-	void registerButton(String ability){
-		
-	}
 	
 	//preset encounters, like on the map
-	void combat2(int random){
+	static void combat2(int random){
 		switch (random){
 			case 0:
 				combat(1, 2, 0);
@@ -485,7 +534,13 @@ public class DataMiners extends Application {
 		
 		tempMode = mode;
 		mode = "combat";
-		hboxEnemies.getChildren().addAll(new ImageView(temp1.btleSpr),new ImageView(temp2.btleSpr),new ImageView(temp3.btleSpr));
+		
+		cEnemyPic1 = new ImageView(temp1.btleSpr);
+		cEnemyPic2 = new ImageView(temp2.btleSpr);
+		cEnemyPic3 = new ImageView(temp3.btleSpr);
+		
+		hboxEnemies.getChildren().clear();
+		hboxEnemies.getChildren().addAll(cEnemyPic1, cEnemyPic2, cEnemyPic3);
 	}
 	
 	void visit(String currentTown){
@@ -932,10 +987,10 @@ public class DataMiners extends Application {
 		gp2.add(bA1,1,2);
 		gp2.add(bA2,1,3);
 		gp2.add(bA3,1,4);
-		gp2.add(new Label("HP: \t" + p.chp + "/" + p.mhp),0,1);
-		gp2.add(new Label("ATK: \t" + p.atk),0,2);
-		gp2.add(new Label("DEF: \t" + p.def),0,3);
-		gp2.add(new Label("Explr: \t" + p.explr),0,4);
+		gp2.add(new Text("HP: \t" + p.chp + "/" + p.mhp),0,1);
+		gp2.add(new Text("ATK: \t" + p.atk),0,2);
+		gp2.add(new Text("DEF: \t" + p.def),0,3);
+		gp2.add(new Text("Explr: \t" + p.explr),0,4);
 		gp2.setVgap(10);
 		gp2.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 		gp2.setPadding(new Insets(10, 10, 10, 10));
@@ -1016,10 +1071,10 @@ public class DataMiners extends Application {
 		gp2.add(bA1,1,2);
 		gp2.add(bA2,1,3);
 		gp2.add(bA3,1,4);
-		gp2.add(new Label("HP: \t" + p.chp + "/" + p.mhp),0,1);
-		gp2.add(new Label("ATK: \t" + p.atk),0,2);
-		gp2.add(new Label("DEF: \t" + p.def),0,3);
-		gp2.add(new Label("Explr: \t" + p.explr),0,4);
+		gp2.add(new Text("HP: \t" + p.chp + "/" + p.mhp),0,1);
+		gp2.add(new Text("ATK: \t" + p.atk),0,2);
+		gp2.add(new Text("DEF: \t" + p.def),0,3);
+		gp2.add(new Text("Explr: \t" + p.explr),0,4);
 		gp2.setVgap(10);
 		gp2.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 		gp2.setPadding(new Insets(10, 10, 10, 10));
@@ -1037,7 +1092,7 @@ public class DataMiners extends Application {
 	public void otherWindow(){
 		//VBox vbox2 = new VBox();
 		
-		TextArea ta1 = new TextArea("DataMiners is a somewhat complicated game.\nThe goal is to take your party of 4 (or more if you find people willing to join\nyour cause ;] ) and take down the virus that has recently got onto your \ncomputer.\n\nGENERAL CONTROLS:\n Party Tab - This tab has the windows for each party member you have\nactive. It also has the CHANGE command, which allows you \nto change your party members as you see fit. Just click on their\nprofile picture and select where you want them to be. \n\nNOTE: YOU CAN ONLY CHANGE PARTY MEMBERS IN A TOWN.\n\nTOWN CONTROLS:\nVisit - visit the town's center to see if there is anything of use there.\nShop - Visit the town's shop and buy things!\nMap - Open the town's map and access a new location!\n\nITEM CONTROLS:\nTo access an item, simply click on it. \nAlternatively, you can press the 'use first item' button,\nwhich will use the first usable item.\n\nYou have a max of 25 items, and some items cannot be used.\n\nMAP CONTROLS:\nMoving in the map is very easy, simply click somewhere to move. \nIf you hit one of the brown tiles, you'll enter a town! \nIf you enter a red tile, you'll enter a dungeon!\n\nBe careful however, as you can enter\ncombat while travelling!\n\nCOMBAT CONTROLS:\nThis is where the combat controls will go.\n\nThank you for playing DataMiners, have a nice day!");
+		TextArea ta1 = new TextArea("DataMiners is a somewhat complicated game.\nThe goal is to take your party of 4 (or more if you find people willing to join\nyour cause ;] ) and take down the virus that has recently got onto your \ncomputer.\n\nGENERAL CONTROLS:\n Party Tab - This tab has the windows for each party member you have\nactive. It also has the CHANGE command, which allows you \nto change your party members as you see fit. Just click on their\nprofile picture and select where you want them to be. \n\nNOTE: YOU CAN ONLY CHANGE PARTY MEMBERS IN A TOWN.\n\nTOWN CONTROLS:\nVisit - visit the town's center to see if there is anything of use there.\nShop - Visit the town's shop and buy things!\nMap - Open the town's map and access a new location!\n\nITEM CONTROLS:\nTo access an item, simply click on it. \nAlternatively, you can press the 'use first item' button,\nwhich will use the first usable item.\n\nYou have a max of 25 items, and some items cannot be used.\n\nMAP CONTROLS:\nMoving in the map is very easy, simply click somewhere to move. \nIf you hit one of the brown tiles, you'll enter a town! \nIf you enter a red tile, you'll enter a dungeon!\n\nBe careful however, as you can enter\ncombat while travelling!\n\nCOMBAT CONTROLS:\nCombat in DataMiners is turn based.\nMeaning that you go, then the respective enemy goes, and then back to\nyou. To attack, you want to open the party member's\nwindow and then select the attack you would like to use.\n\nDon't forget to use items!\n\nTHANK YOU for playing DataMiners, have a nice day!");
 		ta1.setEditable(false);
 		ta1.setStyle("-fx-opacity: 1;");
 		Tab howToPlayTab = new Tab("Manual",ta1);
@@ -1111,22 +1166,27 @@ public class DataMiners extends Application {
 		newWindow.show();
 	}
 	
-	public String townInfo(String townName){
-		if (townName == "ugpu"){
-			return "This town is known for their exports of graphic tiles. \nThey are very friendly once you get to know them. \nThey are the least of the towns affected by the virus.";
-		}
-		else{
-			return "yeah.";
-		}
-	}
-	
 	void runAttack(int attackMode){
 		GridPane gpChoose = new GridPane();
 		Stage chooseWindow = new Stage();
+		Button btnP1;
+		Button btnP2;
+		Button btnP3;
+		Button btnP4;
 		
-		Button btnP1 = new Button(eCombatTable[0].name);
-		Button btnP2 = new Button(eCombatTable[1].name);
-		Button btnP3 = new Button(eCombatTable[2].name);
+		if (attackMode==0){
+			btnP1 = new Button(eCombatTable[0].name);
+			btnP2 = new Button(eCombatTable[1].name);
+			btnP3 = new Button(eCombatTable[2].name);
+			btnP4 = new Button(eCombatTable[2].name);
+		}
+		else{
+			btnP1 = new Button(pTable[0].name);
+			btnP2 = new Button(pTable[1].name);
+			btnP3 = new Button(pTable[2].name);
+			btnP4 = new Button(pTable[3].name);
+		}
+		
 		
 		btnP1.setOnAction(e -> {
 			attack(attackMode, 0);
@@ -1140,18 +1200,28 @@ public class DataMiners extends Application {
 			attack(attackMode, 2);
 			chooseWindow.close();
 		});
+		btnP4.setOnAction(e -> {
+			attack(attackMode, 3);
+			chooseWindow.close();
+		});
 		
 		gpChoose.add(new Label("Who will you Target?"),0,0);
 		gpChoose.add(btnP1,0,1);
-		gpChoose.add(btnP2,0,2);
-		gpChoose.add(btnP3,0,3);
+		if (!btnP2.getText().equals("blank"))
+			gpChoose.add(btnP2,0,2);
+			
+		
+		if (!btnP3.getText().equals("blank"))
+			gpChoose.add(btnP3,0,3);
+		
+		if (attackMode==1) {
+			gpChoose.add(btnP4,0,4);
+		}
 		
 		gpChoose.setPadding(new Insets(10, 10, 10, 10));
 		gpChoose.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
 		
 		Scene sceneI = new Scene(gpChoose,320,150);
-		
-		chooseWindow.setOnCloseRequest(e -> e.consume());
 
 		chooseWindow.setTitle("Choose Target");
 		chooseWindow.setResizable(false);
@@ -1163,31 +1233,70 @@ public class DataMiners extends Application {
 	void attack(int attackMode,int target){
 		switch(attackMode){
 			case 0:
-				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " Dealt " + pTable[currentTurn].atk + " to " + eCombatTable[target].name + "!");
+				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " Dealt " + pTable[currentTurn].atk + " damage to " + eCombatTable[target].name + "!");
 				eCombatTable[target].statsDown(0, pTable[currentTurn].atk);
+				if (eCombatTable[target].isKO()){
+					combatLog.setText(combatLog.getText() + "\n" + eCombatTable[target].name + " was knocked out!");
+					switch (target) {
+						case 0:
+							cEnemyPic1.setVisible(false);
+							break;
+						case 1:
+							cEnemyPic2.setVisible(false);
+							break;
+						case 2:
+							cEnemyPic3.setVisible(false);
+							break;
+					}
+				}
 				break;
 			case 1:
-				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " healed " + pTable[currentTurn].atk + " to " + pTable[target].name + "!");
+				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " healed " + pTable[currentTurn].atk + " damage to " + pTable[target].name + "!");
 				pTable[target].statsUp(0, pTable[currentTurn].atk);
 				break;
 			case 2:
-				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " Dealt " + pTable[currentTurn].atk + " to " + eCombatTable[target].name + "!");
+				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " Dealt " + pTable[currentTurn].atk + " damage to " + eCombatTable[target].name + "!");
 				eCombatTable[target].statsDown(0, pTable[currentTurn].atk);
+				if (eCombatTable[target].isKO()){
+					combatLog.setText(combatLog.getText() + "\n" + eCombatTable[target].name + " was knocked out!");
+					switch (target) {
+						case 0:
+							cEnemyPic1.setVisible(false);
+							break;
+						case 1:
+							cEnemyPic2.setVisible(false);
+							break;
+						case 2:
+							cEnemyPic3.setVisible(false);
+							break;
+					}
+				}
 				break;
 		}
 		if (currentTurn<=2){
 			//run enemy, next turn
-			if(!eCombatTable[currentTurn].isKO()){
+			if(!(eCombatTable[currentTurn].isKO()) && (eCombatTable[currentTurn] != blank)){
 				int variable = rand.nextInt(3); 
 				pTable[variable].statsDown(1, eCombatTable[currentTurn].atk);
 				combatLog.setText(combatLog.getText() + "\n" + eCombatTable[currentTurn].name + " Dealt " + eCombatTable[currentTurn].atk + " to " + pTable[variable].name + "!");
+				if (pTable[variable].isKO()){
+					combatLog.setText(combatLog.getText() + "\n" + pTable[target].name + " was knocked out!");
+				}
 			}
 			
 			currentTurn++;
+			
+			while (pTable[currentTurn].isKO()){
+				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " is still knocked out!");
+				currentTurn++;
+			}
+			
 			combatLog.setText(combatLog.getText() + "\nIt is now " + pTable[currentTurn].name + "'s Turn!");
 		}
 		else{
 			currentTurn=0;
+			
+			combatLog.setText(combatLog.getText() + "\nIt is now " + pTable[currentTurn].name + "'s Turn!");
 		}
 		
 		//if the party won or not
@@ -1198,6 +1307,33 @@ public class DataMiners extends Application {
 		else if (pTable[0].isKO() && pTable[1].isKO() && pTable[2].isKO() && pTable[3].isKO()){
 			mode="game over";
 			modeMachine();
+		}
+	}
+	
+	public String townInfo(String townName){
+		if (townName.equals("ugpu")){
+			return "This town is known for their exports of graphic tiles. \nThey are very friendly once you get to know them. \nThey are the least of the towns affected by the virus.";
+		}
+		else if (townName.equals("harddriveton")){
+			return "HardDriveTon is most known for their hording. \nThey collect everything you can find and then some. \nIf you want somemthing, you will to do some begging and bargining for it.";
+		}
+		else if (townName.equals("trashbin")){
+			return "A dungeon crawling with lower level enemies that have been scrapped. \nMight be something of worth down there.";
+		}
+		else{
+			return "yeah.";
+		}
+	}
+	
+	String getBack(){
+		if (tempMode=="map"){
+			return "/images/battlebacks/map.png";
+		}
+		if (tempMode=="town"){
+			return "/images/battlebacks/town.png";
+		}
+		else{
+			return "/images/battlebacks/blank.png";
 		}
 	}
 }

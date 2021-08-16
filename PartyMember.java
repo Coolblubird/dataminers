@@ -49,16 +49,16 @@ class PartyMember implements Battler{
 	@Override
 	public void statsUp(int stat, int amount){
 		switch (stat) {
-			case 1:
+			case 0:
 				if (this.chp+amount < this.mhp)
 					this.chp+=amount;
 				else 
 					this.chp=this.mhp;
 				break;
-			case 2:
+			case 1:
 				this.atk+=amount;
 				break;
-			case 3:
+			case 2:
 				this.def+=amount;
 				break;
 		}	
@@ -67,17 +67,19 @@ class PartyMember implements Battler{
 	@Override
 	public void statsDown(int stat, int amount){
 		switch (stat) {
-			case 1:
-				if (this.chp-amount > 0)
+			case 0:
+				if (this.chp-amount > 0){
 					this.chp-=amount;
-				else 
+				}
+				else {
 					this.chp=0;
 					this.ko=true;
+				}
 				break;
-			case 2:
+			case 1:
 				this.atk-=amount;
 				break;
-			case 3:
+			case 2:
 				this.def-=amount;
 				break;
 		}	
@@ -183,6 +185,9 @@ class Enemy implements Battler{
 	Enemy(String newName, int newAtk, int newDef,int newMHP){
 		this.name = newName;
 		this.fileName = newName.toLowerCase().trim();
+		if (this.fileName.equals("blank")){
+			ko=true;
+		}
 		this.atk = newAtk;
 		this.def = newDef;
 		this.mhp = newMHP;
@@ -193,16 +198,16 @@ class Enemy implements Battler{
 	@Override
 	public void statsUp(int stat, int amount){
 		switch (stat) {
-			case 1:
+			case 0:
 				if (this.chp+amount < this.mhp)
 					this.chp+=amount;
 				else 
 					this.chp=this.mhp;
 				break;
-			case 2:
+			case 1:
 				this.atk+=amount;
 				break;
-			case 3:
+			case 2:
 				this.def+=amount;
 				break;
 		}	
@@ -211,17 +216,19 @@ class Enemy implements Battler{
 	@Override
 	public void statsDown(int stat, int amount){
 		switch (stat) {
-			case 1:
-				if (this.chp-amount > 0)
+			case 0:
+				if (this.chp-amount > 0){
 					this.chp-=amount;
-				else 
+				}
+				else {
 					this.chp=0;
 					this.ko=true;
+				}
 				break;
-			case 2:
+			case 1:
 				this.atk-=amount;
 				break;
-			case 3:
+			case 2:
 				this.def-=amount;
 				break;
 		}	
