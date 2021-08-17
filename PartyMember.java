@@ -30,6 +30,7 @@ class PartyMember implements Battler{
 	Image facePlateSpr;
 	Image overWorldSpr;
 	boolean ko = false;
+	Stage pWindow = new Stage();
 	
 	PartyMember(String newName, int newAtk, int newDef, int newExplr, int newMhp, String newATK1, String newATK2, String newATK3){
 		this.name = newName;
@@ -68,8 +69,11 @@ class PartyMember implements Battler{
 	public void statsDown(int stat, int amount){
 		switch (stat) {
 			case 0:
-				if (this.chp-amount > 0){
-					this.chp-=amount;
+				if (this.chp-amount+this.def > 0){
+					amount-=this.def;
+					if (amount>0){
+						this.chp-=amount;
+					}
 				}
 				else {
 					this.chp=0;
@@ -217,8 +221,11 @@ class Enemy implements Battler{
 	public void statsDown(int stat, int amount){
 		switch (stat) {
 			case 0:
-				if (this.chp-amount > 0){
-					this.chp-=amount;
+				if (this.chp-amount+this.def > 0){
+					amount-=this.def;
+					if (amount>0){
+						this.chp-=amount;
+					}
 				}
 				else {
 					this.chp=0;
