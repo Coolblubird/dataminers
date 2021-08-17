@@ -66,16 +66,37 @@ public class DataMiners extends Application {
 	
 	//other party members
 	PartyMember kyzu = new PartyMember("Kyzu", 15, 2, 10, 10, "Kōgeki", "Hashiru", "En'eki");
+	PartyMember melody = new PartyMember("Melody", 25, 25, 25, 50, "Rocket", "Kindness", "Wander");
+	PartyMember antt = new PartyMember("Antt", 10, 9, 13, 30, "Strength", "Build", "Burrow");
+	PartyMember steve = new PartyMember("Steve", 18, 2, 10, 10, "Wrench Bash", "Repair", "Tinker");
+	PartyMember stockholm = new PartyMember("Stockholm", 15, 2, 10, 10, "Tennis", "White Bread", "Subway");
+	PartyMember gatorboy = new PartyMember("GatorBoy", 15, 2, 10, 10, "Hyuk!", "Yah!", "Eep!");
+	PartyMember professorMoney = new PartyMember("ProfessorMoney", 15, 2, 10, 10, "Coin Gun", "Cash Flow", "Bribe");
 	
 	//enemies, name, atk, def, hp
 	static ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
 	Enemy blank = new Enemy("blank",0,0,0);
 	
-	//UGPU enemies
 	Enemy slimyCode = new Enemy("SlimyCode",6,2,5);
 	Enemy viralOfficer = new Enemy("ViralOfficer",12,4,15);
 	Enemy hauntedCode = new Enemy("HauntedCode",9,1,12);
 	Enemy navyWindCO = new Enemy("NavyWindCO",6,3,13);
+	Enemy blargo = new Enemy("Blargo",6,3,13);
+	Enemy firewall = new Enemy("FireWall",6,3,13);
+	Enemy bandit = new Enemy("Bandit",6,3,13);
+	Enemy browserGremlin = new Enemy("BrowserGremlin",6,3,13);
+	Enemy glitchedOfficer = new Enemy("GlitchedOfficer",6,3,13);
+	Enemy glitchKnight = new Enemy("GlitchKnight",6,3,13);
+	Enemy glitchtopus = new Enemy("Glitchtopus",6,3,13);
+	Enemy glitchedvillvillvillee = new Enemy("GlitchedVillVillVillee",6,3,13);
+	Enemy invasiveSpacer = new Enemy("InvasiveSpacer",6,3,13);
+	Enemy looseTerminal = new Enemy("LooseTerminal",6,3,13);
+	Enemy mab = new Enemy("MildlyAnnoyedBird",6,3,13);
+	Enemy taxman = new Enemy("Taxman",6,3,13);
+	Enemy theCube = new Enemy("TheCube",6,3,13);
+	Enemy weatherman = new Enemy("WeatherMan",6,3,13);
+	Enemy webSurfer = new Enemy("WebSurfer",6,3,13);
+	Enemy wildone = new Enemy("WildOne",6,3,13);
 	
 	//dungeon
 	Dungeon trashBin = new Dungeon("TrashBin",3);
@@ -497,7 +518,9 @@ public class DataMiners extends Application {
 				
 				picForDungeon = new ImageView(new Image("/images/locations/" + cTown + ".png"));
 				
-				dungeonVBox.getChildren().addAll(picForDungeon, new Text(townInfo(cTown)), dungeonName, btnVisit, btnMap);
+				dungeonVBox.getChildren().addAll(picForDungeon, dungeonName, new Text(townInfo(cTown)), btnVisit, btnMap);
+				dungeonVBox.setAlignment(Pos.CENTER);
+				dungeonVBox.setSpacing(10.0);
 				
 				mainVBox.setSpacing(0.0);
 				menuBarTown.getMenus().removeAll(menuParty,menuItems,menuOther,menuAbout);
@@ -518,13 +541,13 @@ public class DataMiners extends Application {
 	static void combat2(int random){
 		switch (random){
 			case 0:
-				combat(1, 2, 0);
+				combat(3, 2, 4);
 				break;
 			case 1:
 				combat(3, 4, 1);
 				break;
 			case 2:
-				combat(4, 1, 1);
+				combat(4, 1, 2);
 		}
 	}
 	
@@ -1167,6 +1190,8 @@ public class DataMiners extends Application {
 			case 1:
 				combatLog.appendText("\n" + pTable[currentTurn].name + " healed " + pTable[currentTurn].explr + " damage to " + pTable[target].name + "!");
 				pTable[target].statsUp(0, pTable[currentTurn].atk);
+				
+				partyWindow(pTable[target], target);
 				break;
 			case 2:
 				combatLog.appendText("\n" + pTable[currentTurn].name + " Dealt " + pTable[currentTurn].explr + " damage to " + eCombatTable[target].name + "!");
