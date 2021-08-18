@@ -11,7 +11,6 @@ import javafx.stage.Window;
 import javafx.geometry.*;
 import javafx.scene.image.*;
 import java.util.*;
-import javax.sound.sampled.*;
 
 //Jordan Ashe X-X-2021
 
@@ -108,7 +107,7 @@ public class DataMiners extends Application {
 	static String tempMode = "";
 	String cTown = "ugpu";
 	String cTownName = "UGPU";
-	String cQuest = "N/A";
+	static String cQuest = "N/A";
 	String cQuestInfo = "N/A";
 	String cQuestEnemy = "N/A";
 	MenuBar menuBarCombat = new MenuBar();
@@ -146,7 +145,8 @@ public class DataMiners extends Application {
 	int textIntro = 0;
 	int currentTurn=0;
 	boolean visitGPUFirst = false;
-	boolean quest1complete = false;
+	static boolean quest1complete = false;
+	static boolean quest1reward = false;
 	boolean shopUnlocked = false;
 	static boolean inCombat = false;
 	static boolean inDungeon = false;
@@ -165,7 +165,7 @@ public class DataMiners extends Application {
 		enemyList.add(viralOfficer);
 		enemyList.add(navyWindCO);
 		
-		itemsOnPerson.add(new Item("HealingPotion",false,1,10));
+		itemsOnPerson.add(new Item("HealingPotion",false,0,10));
 		
 		
 		
@@ -219,6 +219,16 @@ public class DataMiners extends Application {
 		
 		menuItemP4.setOnAction(e -> partyWindow(pTable[3], 3));
 		
+		MenuItem menuItemPAll = new MenuItem("Open all Party Member Slots");
+		menuParty.getItems().add(menuItemPAll);
+		
+		menuItemPAll.setOnAction(e -> {
+			partyWindow(pTable[0], 0);
+			partyWindow(pTable[1], 1);
+			partyWindow(pTable[2], 2);
+			partyWindow(pTable[3], 3);
+		});
+		
 		//-------------------COMBAT-------------------
 		combatLog.setEditable(false);
 		combatLog.setStyle("-fx-opacity: 1; -fx-font-size: 24px;");
@@ -242,6 +252,7 @@ public class DataMiners extends Application {
 					Dungeon.event(trashBin);
 					break;
 			}
+			modeMachine();
 		});
 		
 		//-------------------MAP----------------------
@@ -265,7 +276,8 @@ public class DataMiners extends Application {
 		mapPane.setOnMouseClicked(e -> {
 			if (e.getY() > 76 && e.getY() < 628){
 				plrMap.relocate(e.getX()-16,e.getY()-24);
-				if (rand.nextInt(5)==1){
+				
+				if (rand.nextInt(5)==1 && mode=="map"){
 					int battle = rand.nextInt(3);
 					combat2(battle);
 					mode="combat";
@@ -575,6 +587,46 @@ public class DataMiners extends Application {
 				mainVBox.setBackground(new Background(new BackgroundFill(dungeonColor, CornerRadii.EMPTY, Insets.EMPTY)));
 				mainVBox.getChildren().addAll(menuBarTown,dungeonVBox);
 				break;
+			case "dungeonReward":
+				dungeonVBox.getChildren().clear();
+				
+				Text dungeonName3 = new Text(cTownName);
+				dungeonName3.setFont(new Font(20.0));
+				
+				Color dungeonColor2 = Color.GOLD;
+				
+				Item reward = new Item("Apple",false,0,10);
+				
+				switch (cTown) {
+					case "trashbin":
+						reward = new Item("OldTextDocument", false, 2, 5);
+						break;
+				}
+				
+				String stat = "HP";
+				
+				switch (reward.stat) {
+					case 1:
+						stat="Attack";
+						break;
+					case 2:
+						stat="Defense";
+						break;
+				}
+				
+				picForDungeon = new ImageView(new Image("/images/locations/" + cTown + ".png"));
+				
+				dungeonVBox.getChildren().addAll(picForDungeon, dungeonName3, new Text("Fantastic job!"), new Text("Your reward is a" + reward.name + ".\nIt increases your " + stat + " by " + reward.statAmount + "."),btnMap);
+				itemsOnPerson.add(reward);
+				dungeonVBox.setAlignment(Pos.CENTER);
+				dungeonVBox.setSpacing(10.0);
+				
+				mainVBox.setSpacing(0.0);
+				menuBarTown.getMenus().removeAll(menuParty,menuItems,menuOther,menuAbout);
+				menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
+				mainVBox.setBackground(new Background(new BackgroundFill(dungeonColor2, CornerRadii.EMPTY, Insets.EMPTY)));
+				mainVBox.getChildren().addAll(menuBarTown,dungeonVBox);
+				break;
 			case "gameover":
 				mainVBox.setSpacing(0.0);
 				mainVBox.getChildren().addAll(new ImageView(new Image("/images/game over.png")), btnGO);
@@ -646,11 +698,11 @@ public class DataMiners extends Application {
 		switch (currentTown) {
 			case "ugpu":
 				if (quest1complete == false){
-					gpQ.add(new Label("Descend Below - Grandma Calculator:\n\tThey say below the town there is a virus that has taken root of\nthe old storages down there.\n\nI guess what I am asking is easy to follow, but could\nyou be a dearie and slay that nasty and mean Viral Officer?\n\n(Defeat one Viral Officer in the Trash Bin Dungeon)"),0,1);
+					gpQ.add(new Label("Descend Below - Grandma Calculator:\n\tThey say below the town there is a virus that has taken root of\nthe old storages down there.\n\nI guess what I am asking is easy to follow, but could\nyou be a dearie and slay that nasty and mean Viral Officer?\n\n(Defeat one Viral Officer in the TrashBin Dungeon)"),0,1);
 					
 					btnAcceptQuest.setOnAction(e -> {
 						cQuest = "Descend Below";
-						cQuestInfo = "Below the town, in the Cellar Dungeon, a Viral Officer has set up camp!";
+						cQuestInfo = "Below the town, in the TrashBin Dungeon, a Viral Officer has set up camp!";
 						cQuestEnemy = "viralofficer";
 						questLog.setText(cQuest + "\n" + cQuestInfo);
 					});
@@ -658,7 +710,14 @@ public class DataMiners extends Application {
 					gpQ.add(btnAcceptQuest,0,2);
 				}
 				else{
-					gpQ.add(new Label("No Quest Availble:\n\tSorry, but you have already completed the quest here."),0,1);
+					if (quest1reward == true){
+						gpQ.add(new Label("No Quest Availble:\n\tSorry, but you have already completed the quest here."),0,1);
+					}
+					else {
+						gpQ.add(new Label("Descend Below - Grandma Calculator:\n\tThank you so much!\nNow that mean old Viral Officer will be on his way!\nHere, it isn't much, but take this.'"),0,1);
+						quest1reward = true;
+						itemsOnPerson.add(new Item("GrannysNumberSoup", false, 0, 30));
+					}
 				}
 		}
 		
@@ -1008,6 +1067,7 @@ public class DataMiners extends Application {
 				}
 				else {
 					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
+					combatLog.setScrollTop(Double.MAX_VALUE);
 				}
 			}
 		});
@@ -1023,6 +1083,7 @@ public class DataMiners extends Application {
 				}
 				else {
 					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
+					combatLog.setScrollTop(Double.MAX_VALUE);
 				}
 			}
 		});
@@ -1038,6 +1099,7 @@ public class DataMiners extends Application {
 				}
 				else {
 					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
+					combatLog.setScrollTop(Double.MAX_VALUE);
 				}
 			}
 		});
@@ -1221,6 +1283,7 @@ public class DataMiners extends Application {
 				eCombatTable[target].statsDown(0, pTable[currentTurn].atk);
 				if (eCombatTable[target].isKO()){
 					combatLog.appendText("\n" + eCombatTable[target].name + " was knocked out!");
+					combatLog.setScrollTop(Double.MAX_VALUE);
 					switch (target) {
 						case 0:
 							cEnemyPic1.setVisible(false);
@@ -1236,15 +1299,17 @@ public class DataMiners extends Application {
 				break;
 			case 1:
 				combatLog.appendText("\n" + pTable[currentTurn].name + " healed " + pTable[currentTurn].explr + " damage to " + pTable[target].name + "!");
-				pTable[target].statsUp(0, pTable[currentTurn].atk);
+				combatLog.setScrollTop(Double.MAX_VALUE);
+				pTable[target].statsUp(0, pTable[currentTurn].explr);
 				
 				partyWindow(pTable[target], target);
 				break;
 			case 2:
-				combatLog.appendText("\n" + pTable[currentTurn].name + " Dealt " + pTable[currentTurn].explr + " damage to " + eCombatTable[target].name + "!");
+				combatLog.appendText("\n" + pTable[currentTurn].name + " Dealt " + pTable[currentTurn].atk + " damage to " + eCombatTable[target].name + "!");
 				eCombatTable[target].statsDown(0, pTable[currentTurn].atk);
 				if (eCombatTable[target].isKO()){
 					combatLog.appendText("\n" + eCombatTable[target].name + " was knocked out!");
+					combatLog.setScrollTop(Double.MAX_VALUE);
 					switch (target) {
 						case 0:
 							cEnemyPic1.setVisible(false);
@@ -1274,6 +1339,7 @@ public class DataMiners extends Application {
 				
 				if (pTable[variable].isKO()){
 					combatLog.setText(combatLog.getText() + "\n" + pTable[variable].name + " was knocked out!");
+					combatLog.setScrollTop(Double.MAX_VALUE);
 				}
 				
 				partyWindow(pTable[variable], variable);
@@ -1283,6 +1349,10 @@ public class DataMiners extends Application {
 			
 			while (pTable[currentTurn].isKO()){
 				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " is still knocked out!");
+				combatLog.setScrollTop(Double.MAX_VALUE);
+
+				if (currentTurn==3)
+					currentTurn=0;
 				
 				if(!(eCombatTable[currentTurn].isKO()) && (eCombatTable[currentTurn] != blank)){
 					int variable = rand.nextInt(4); 
@@ -1297,6 +1367,7 @@ public class DataMiners extends Application {
 					
 					if (pTable[variable].isKO()){
 						combatLog.setText(combatLog.getText() + "\n" + pTable[variable].name + " was knocked out!");
+						combatLog.setScrollTop(Double.MAX_VALUE);
 					}
 					
 					partyWindow(pTable[variable], variable);
@@ -1305,11 +1376,13 @@ public class DataMiners extends Application {
 			}
 			
 			combatLog.setText(combatLog.getText() + "\nIt is now " + pTable[currentTurn].name + "'s Turn!");
+			combatLog.setScrollTop(Double.MAX_VALUE);
 		}
 		else{
 			currentTurn=0;
 			
 			combatLog.setText(combatLog.getText() + "\nIt is now " + pTable[currentTurn].name + "'s Turn!");
+			combatLog.setScrollTop(Double.MAX_VALUE);
 		}
 		
 		//if the party won or not
@@ -1339,155 +1412,172 @@ public class DataMiners extends Application {
 	}
 	
 	String getBack(){
+		System.out.println(tempMode);
 		if (tempMode=="map"){
 			return "/images/battlebacks/map.png";
+		}
+		else if (tempMode=="dungeonReward"){
+			return "/images/battlebacks/dungeonReward.png";
 		}
 		else if (tempMode=="indungeon"){
 			switch (cTown) {
 				case "trashbin":
-					return "/images/battlebacks/town.png";
+					return "/images/battlebacks/trashbin.png";
 				default:
 					return "/images/battlebacks/blank.png";
 			}
 		}
 		return "/images/battlebacks/blank.png";
 	}	
-}
-
-class Dungeon {
-	static Random randomizer = new Random();
-	String name;
-	String fileName;
-	int events;
-	Image placeSpr;
-	int tempEvents;
 	
-	Dungeon(String newName, int maxEvents){
-		this.name = newName;
-		this.fileName = newName.toLowerCase().trim();
-		this.events = maxEvents;
-		this.placeSpr = new Image("/images/locations/map/" + this.fileName + ".png");
-		this.tempEvents = this.events;
-	}
-	
-	//utrigger event (DO LATER)
-	static void event(Dungeon d){
-		if (d.tempEvents>0){
-			GridPane gpEvent = new GridPane();
-			Stage eventWindow = new Stage();
-			int event = randomizer.nextInt(5);
-			
-			switch (d.name) {
-				case "trashbin":
-					switch (event) {
-						case 0:
-							if (DataMiners.pTable[0].explr+DataMiners.pTable[1].explr+DataMiners.pTable[2].explr+DataMiners.pTable[3].explr > 40){
-								gpEvent.add(new Label("Do you Wish to Encounter:"),0,0);
-								gpEvent.add(new Label("\tStray Code"),0,1);
-							}
-							else{
-								DataMiners.combat(1,2,1);
-								eventWindow.close();
-							}
-							break;
-						case 1:
-							gpEvent.add(new Label("You found a HealthPotion!"),0,0);
-							gpEvent.add(new Label("\tWill you take it?"),0,1);
-							break;
-						case 2:
-							gpEvent.add(new Label("You found an AttackFruit!"),0,0);
-							gpEvent.add(new Label("\tWill you take it?"),0,1);
-							break;
-						case 3:
-							if (DataMiners.pTable[0].explr+DataMiners.pTable[1].explr+DataMiners.pTable[2].explr+DataMiners.pTable[3].explr > 50){
-								gpEvent.add(new Label("Do you Wish to Encounter:"),0,0);
-								gpEvent.add(new Label("\tNavyWindCO and co."),0,1);
-							}
-							else{
-								DataMiners.combat(1,4,1);
-								eventWindow.close();
-							}
-							break;
-						case 4:
-							if (DataMiners.pTable[0].explr+DataMiners.pTable[1].explr+DataMiners.pTable[2].explr+DataMiners.pTable[3].explr > 60){
-								gpEvent.add(new Label("Do you Wish to Encounter:"),0,0);
-								gpEvent.add(new Label("\tHauntedCode"),0,1);
-							}
-							else{
-								DataMiners.combat(2,2,0);
-								eventWindow.close();
-							}
-							break;
-					}
-					break;
-			}
-			
-			Button btnP1 = new Button("Yes");
-			Button btnP2 = new Button("No");
-			
-			btnP1.setOnAction(e -> {
-				switch (event) {
-					case 0:
-						DataMiners.combat(1,2,1);
+	static class Dungeon {
+		static Random randomizer = new Random();
+		String name;
+		String fileName;
+		int events;
+		Image placeSpr;
+		int tempEvents;
+		
+		Dungeon(String newName, int maxEvents){
+			this.name = newName;
+			this.fileName = newName.toLowerCase().trim();
+			this.events = maxEvents;
+			this.placeSpr = new Image("/images/locations/map/" + this.fileName + ".png");
+			this.tempEvents = this.events;
+		}
+		
+		//utrigger event (DO LATER)
+		static void event(Dungeon d){
+			if (d.tempEvents>0){
+				GridPane gpEvent = new GridPane();
+				Stage eventWindow = new Stage();
+				int event = randomizer.nextInt(5);
+				Label tempLabel1 = new Label("You were Ambushed!");
+				Label tempLabel2 = new Label();
+				
+				switch (d.name) {
+					case "TrashBin":
+						switch (event) {
+							case 0:
+								if(DataMiners.pTable[0].explr+DataMiners.pTable[1].explr+DataMiners.pTable[2].explr+DataMiners.pTable[3].explr > 40){
+									tempLabel1 = new Label("Do you Wish to Encounter:");
+									tempLabel2 = new Label("\tStray Code");
+								}
+								else{
+									eventWindow.close();
+									DataMiners.combat(1,2,0);
+								}
+								break;
+							case 1:
+								tempLabel1 = new Label("You found a HealthPotion!");
+								tempLabel2 = new Label("\tWill you take it?");
+								break;
+							case 2:
+								tempLabel1 = new Label("You found a AttackFruit!");
+								tempLabel2 = new Label("\tWill you take it?");
+								break;
+							case 3:
+								if (DataMiners.pTable[0].explr+DataMiners.pTable[1].explr+DataMiners.pTable[2].explr+DataMiners.pTable[3].explr > 50){
+									tempLabel1 = new Label("Do you Wish to Encounter:");
+									tempLabel2 = new Label("\tNavyWindCO and Co.");
+								}
+								else{
+									eventWindow.close();
+									DataMiners.combat(1,4,2);
+								}
+								break;
+							case 4:
+								if (DataMiners.pTable[0].explr+DataMiners.pTable[1].explr+DataMiners.pTable[2].explr+DataMiners.pTable[3].explr > 60){
+									tempLabel1 = new Label("Do you Wish to Encounter:");
+									tempLabel2 = new Label("\tHaunted Code");
+								}
+								else{
+									eventWindow.close();
+									DataMiners.combat(2,0,0);
+								}
+								break;
+						}		
 						break;
-					case 1:
-						DataMiners.itemsOnPerson.add(new Item("HealingPotion",false,1,10));
-						break;
-					case 2:
-						DataMiners.itemsOnPerson.add(new Item("AttackFruit",false,2,5));
-						break;
-					case 3:
-						DataMiners.combat(1,4,1);
-						break;
-					case 4:
-						DataMiners.combat(2,2,0);
-						break;
-						
 				}
 				
-				d.tempEvents-=1;
-				eventWindow.close();
-			});
-			btnP2.setOnAction(e -> {
-				eventWindow.close();
-			});
-			
-			gpEvent.add(btnP1,0,2);
-			gpEvent.add(btnP2,0,3);
-			
-			gpEvent.setPadding(new Insets(10, 10, 10, 10));
-			gpEvent.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
-			
-			Scene sceneE = new Scene(gpEvent,320,150);
-			
-			eventWindow.setOnCloseRequest(e -> e.consume());
-
-			eventWindow.setTitle("Items");
-			eventWindow.setResizable(false);
-			eventWindow.setAlwaysOnTop(true);
-			eventWindow.setScene(sceneE);
-			eventWindow.show();
-			
-			
-		}
-		else{
-			/*
-			register quests:
-			dungeon names:
-			-The Deep Web
-			-The Center of the Virus
-			-The Terminal
-			-The Music Folder
-			-The Trash Bin
-			-The Depths of the Settings
-			-The Documents Pile
-			-The Gaming Center
-			-The Downloads Folder
-			-The Cloud
-			*/
-			switch(d.name){
+				Button btnP1 = new Button("Yes!");
+				Button btnP2 = new Button("No!");
 				
+				btnP1.setOnAction(e -> {
+					switch (event) {
+						case 0:
+							DataMiners.combat(1,2,0);
+							break;
+						case 1:
+							DataMiners.itemsOnPerson.add(new Item("HealingPotion",false,0,10));
+							break;
+						case 2:
+							DataMiners.itemsOnPerson.add(new Item("AttackFruit",false,1,5));
+							break;
+						case 3:
+							DataMiners.combat(1,4,2);
+							break;
+						case 4:
+							DataMiners.combat(2,0,0);
+							break;
+							
+					}
+					
+					eventWindow.close();
+				});
+				
+				btnP2.setOnAction(e -> eventWindow.close());
+				
+				gpEvent.add(tempLabel1,0,0);
+				gpEvent.add(tempLabel2,0,1);
+				if (mode!="combat"){
+					gpEvent.add(btnP1,0,2);
+					gpEvent.add(btnP2,0,3);
+				}
+				else{
+					gpEvent.add(btnP2,0,2);
+				}
+				
+				gpEvent.setPadding(new Insets(10, 10, 10, 10));
+				gpEvent.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
+				
+				Scene sceneE = new Scene(gpEvent,320,150);
+				
+				eventWindow.setOnCloseRequest(e -> e.consume());
+				
+				d.tempEvents-=1;
+				
+				eventWindow.setTitle("Event:");
+				eventWindow.setResizable(false);
+				eventWindow.setAlwaysOnTop(true);
+				eventWindow.setScene(sceneE);
+				eventWindow.show();
+			}
+			else{
+				/*
+				register quests:
+				dungeon names:
+				-The Deep Web
+				-The Center of the Virus
+				-The Terminal
+				-The Music Folder
+				-The Trash Bin
+				-The Depths of the Settings
+				-The Documents Pile
+				-The Gaming Center
+				-The Downloads Folder
+				-The Cloud
+				*/
+				switch(DataMiners.cQuest){
+					case "Descend Below":
+						combat(3, 3, 3);
+						DataMiners.quest1complete = true;
+						tempMode="dungeonReward";
+						break;
+				}
 			}
 		}
 	}
 }
+
+
