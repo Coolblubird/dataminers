@@ -1133,7 +1133,7 @@ public class DataMiners extends Application {
 					p.pWindow.setWidth(p.pWindow.getWidth() + 0.001);
 				}
 				else {
-					combatLog.setText("\nIt is not your turn, please wait." + combatLog.getText());
+					combatLog.setText("It is not your turn, please wait.\n" + combatLog.getText());
 				}
 			}
 		});
@@ -1148,7 +1148,7 @@ public class DataMiners extends Application {
 					p.pWindow.setWidth(p.pWindow.getWidth() + 0.001);
 				}
 				else {
-					combatLog.setText("\nIt is not your turn, please wait." + combatLog.getText());
+					combatLog.setText("It is not your turn, please wait.\n" + combatLog.getText());
 				}
 			}
 		});
@@ -1163,7 +1163,7 @@ public class DataMiners extends Application {
 					p.pWindow.setWidth(p.pWindow.getWidth() + 0.001);
 				}
 				else {
-					combatLog.setText("\nIt is not your turn, please wait." + combatLog.getText());
+					combatLog.setText("It is not your turn, please wait.\n" + combatLog.getText());
 				}
 			}
 		});
@@ -1247,7 +1247,7 @@ public class DataMiners extends Application {
 			Label pmText = new Label(pm.name);
 			ImageView pmImage = new ImageView(pm.facePlateSpr);
 			pmImage.setOnMousePressed(a -> {
-				PartyMember.putInParty(pm);
+				putInParty(pm);
 			});
 			
 			if (i % 4 == 0 && i > 0){
@@ -1409,28 +1409,30 @@ public class DataMiners extends Application {
 			
 			while (pTable[currentTurn].isKO()){
 				combatLog.setText(pTable[currentTurn].name + " is still knocked out!\n" + combatLog.getText());
-
-				if (currentTurn==3)
-					currentTurn=0;
 				
-				if(!(eCombatTable[currentTurn].isKO()) && (eCombatTable[currentTurn] != blank)){
-					int variable = rand.nextInt(4); 
-					pTable[variable].statsDown(0, eCombatTable[currentTurn].atk);
-					
-					int tempAtk = eCombatTable[currentTurn].atk-pTable[variable].def;
-					
-					if (tempAtk<0)
-						tempAtk=0;
-					
-					combatLog.setText(eCombatTable[currentTurn].name + " Dealt " + tempAtk + " to " + pTable[variable].name + "!\n" + combatLog.getText());
-					
-					if (pTable[variable].isKO()){
-						combatLog.setText(pTable[variable].name + " was knocked out!\n" + combatLog.getText());
+				if(currentTurn!=3){
+					if(!(eCombatTable[currentTurn].isKO()) && (eCombatTable[currentTurn] != blank)){
+						int variable = rand.nextInt(4); 
+						pTable[variable].statsDown(0, eCombatTable[currentTurn].atk);
+						
+						int tempAtk = eCombatTable[currentTurn].atk-pTable[variable].def;
+						
+						if (tempAtk<0)
+							tempAtk=0;
+						
+						combatLog.setText(eCombatTable[currentTurn].name + " Dealt " + tempAtk + " to " + pTable[variable].name + "!\n" + combatLog.getText());
+						
+						if (pTable[variable].isKO()){
+							combatLog.setText(pTable[variable].name + " was knocked out!\n" + combatLog.getText());
+						}
+						
+						partyWindow(pTable[variable], variable);
 					}
-					
-					partyWindow(pTable[variable], variable);
+					currentTurn++;
 				}
-				currentTurn++;
+				else{
+					currentTurn=0;
+				}
 			}
 			
 			combatLog.setText("It is now " + pTable[currentTurn].name + "'s Turn!\n" + combatLog.getText());
@@ -1485,6 +1487,106 @@ public class DataMiners extends Application {
 		}
 		return "/images/battlebacks/blank.png";
 	}	
+	
+	public void putInParty(PartyMember pm){
+		if (pTable[0] != pm && pTable[1] != pm && pTable[2] != pm && pTable[3] != pm){
+			GridPane gpParty = new GridPane();
+			Stage changePartyWindow = new Stage();
+			
+			Button btnP1 = new Button("Slot 1");
+			Button btnP2 = new Button("Slot 2");
+			Button btnP3 = new Button("Slot 3");
+			Button btnP4 = new Button("Slot 4");
+			
+			btnP1.setOnAction(e -> {
+				double temp1 = pTable[0].pWindow.getX();
+				double temp2 = pTable[0].pWindow.getY();
+				pTable[0].pWindow.close();
+				pTable[0] = pm;
+				pTable[0].pWindow.setX(temp1);
+				pTable[0].pWindow.setY(temp2);
+				partyWindow(pTable[0], 0);
+				changePartyWindow.close();
+			});
+			btnP2.setOnAction(e -> {
+				double temp1 = pTable[1].pWindow.getX();
+				double temp2 = pTable[1].pWindow.getY();
+				pTable[1].pWindow.close();
+				pTable[1] = pm;
+				pTable[1].pWindow.setX(temp1);
+				pTable[1].pWindow.setY(temp2);
+				partyWindow(pTable[1], 1);
+				changePartyWindow.close();
+			});
+			btnP3.setOnAction(e -> {
+				double temp1 = pTable[2].pWindow.getX();
+				double temp2 = pTable[2].pWindow.getY();
+				pTable[2].pWindow.close();
+				pTable[2] = pm;
+				pTable[2].pWindow.setX(temp1);
+				pTable[2].pWindow.setY(temp2);
+				partyWindow(pTable[2], 2);
+				changePartyWindow.close();
+			});
+			btnP4.setOnAction(e -> {
+				double temp1 = pTable[3].pWindow.getX();
+				double temp2 = pTable[3].pWindow.getY();
+				pTable[3].pWindow.close();
+				pTable[3] = pm;
+				pTable[3].pWindow.setX(temp1);
+				pTable[3].pWindow.setY(temp2);
+				partyWindow(pTable[3], 3);
+				changePartyWindow.close();
+			});
+			
+			gpParty.add(new Label("Which slot would you like to place them?"),0,0);
+			gpParty.add(new Label(pm.name + "\nHP: \t\t" + pm.chp + "/" + pm.mhp),0,1);
+			gpParty.add(new Label("ATK: \t" + pm.atk),0,2);
+			gpParty.add(new Label("DEF: \t" + pm.def),0,3);
+			gpParty.add(new Label("Explr: \t" + pm.explr),0,4);
+			gpParty.add(btnP1,0,5);
+			gpParty.add(new Label(pTable[0].name),1,5);
+			gpParty.add(btnP2,0,6);
+			gpParty.add(new Label(pTable[1].name),1,6);
+			gpParty.add(btnP3,0,7);
+			gpParty.add(new Label(pTable[2].name),1,7);
+			gpParty.add(btnP4,0,8);
+			gpParty.add(new Label(pTable[3].name),1,8);
+			
+			gpParty.add(new Label("Note: You may have to refresh their party slot."),0,9);
+			
+			gpParty.setPadding(new Insets(10, 10, 10, 10));
+			gpParty.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
+			
+			Scene sceneP = new Scene(gpParty,360,320);
+
+			changePartyWindow.setTitle("Place them where?");
+			changePartyWindow.setResizable(false);
+			changePartyWindow.setAlwaysOnTop(true);
+			changePartyWindow.setScene(sceneP);
+			changePartyWindow.show();
+		}
+		else{
+			VBox cpItem = new VBox();
+			Label errorLabel = new Label("They are already in the party!");
+			Button btnMyBad = new Button("My bad.");
+			Stage changePartyWindow = new Stage();
+			
+			btnMyBad.setOnAction(e -> {
+				changePartyWindow.close();
+			});
+			
+			cpItem.getChildren().addAll(errorLabel,btnMyBad);
+			cpItem.setAlignment(Pos.TOP_CENTER);
+			
+			Scene sceneCP = new Scene(cpItem,200,60);
+			changePartyWindow.setTitle("Already in Party Error");
+			changePartyWindow.setResizable(false);
+			changePartyWindow.setAlwaysOnTop(true);
+			changePartyWindow.setScene(sceneCP);
+			changePartyWindow.show();
+		}
+	}
 	
 	static class Dungeon {
 		static Random randomizer = new Random();
