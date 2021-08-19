@@ -103,7 +103,7 @@ public class DataMiners extends Application {
 	
 	//various variables
 	static ArrayList<Item> itemsOnPerson = new ArrayList<Item>();
-	static String mode = "town";
+	static String mode = "intro";
 	static String tempMode = "";
 	String cTown = "ugpu";
 	String cTownName = "UGPU";
@@ -430,7 +430,7 @@ public class DataMiners extends Application {
 			quest(cTown);
 		});
 		
-		
+		town.setPadding(new Insets(10, 10, 10, 10));
 		
 		//-------------------INTRO SCENE--------------
 		btnIntro.setOnAction(e -> {
@@ -510,7 +510,6 @@ public class DataMiners extends Application {
 				combatGP.setHgap(4);
 				combatGP.setAlignment(Pos.BOTTOM_CENTER);
 				
-				//mainVBox.setSpacing(50.0);
 				mainVBox.setBackground(new Background(new BackgroundFill(Color.CRIMSON, CornerRadii.EMPTY, Insets.EMPTY)));
 				mainVBox.getChildren().addAll(menuBarCombat,combatSP);
 				break;
@@ -541,19 +540,16 @@ public class DataMiners extends Application {
 					}
 				}
 				
-				mainVBox.setSpacing(0.0);
 				menuBarTown.getMenus().removeAll(menuParty,menuItems,menuOther,menuAbout);
 				menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
 				mainVBox.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
 				mainVBox.getChildren().addAll(menuBarTown,town);
 				break;
 			case "visit":
-				mainVBox.setSpacing(0.0);
 				mainVBox.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 				mainVBox.getChildren().addAll(picForCutscene,textForCutscene1,textForCutscene2,textForCutscene3,btnIntro);
 				break;
 			case "map":
-				mainVBox.setSpacing(0.0);
 				menuBarMap.getMenus().removeAll(menuParty,menuOther,menuAbout);
 				menuBarMap.getMenus().addAll(menuParty,menuOther,menuAbout);	
 				mainVBox.getChildren().addAll(menuBarMap, mapSP);
@@ -570,7 +566,6 @@ public class DataMiners extends Application {
 				dungeonVBox.setAlignment(Pos.CENTER);
 				dungeonVBox.setSpacing(10.0);
 				
-				mainVBox.setSpacing(0.0);
 				menuBarTown.getMenus().removeAll(menuParty,menuItems,menuOther,menuAbout);
 				menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
 				mainVBox.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -599,7 +594,6 @@ public class DataMiners extends Application {
 				dungeonVBox.setAlignment(Pos.CENTER);
 				dungeonVBox.setSpacing(10.0);
 				
-				mainVBox.setSpacing(0.0);
 				menuBarTown.getMenus().removeAll(menuParty,menuItems,menuOther,menuAbout);
 				menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
 				mainVBox.setBackground(new Background(new BackgroundFill(dungeonColor, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -639,14 +633,12 @@ public class DataMiners extends Application {
 				dungeonVBox.setAlignment(Pos.CENTER);
 				dungeonVBox.setSpacing(10.0);
 				
-				mainVBox.setSpacing(0.0);
 				menuBarTown.getMenus().removeAll(menuParty,menuItems,menuOther,menuAbout);
 				menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
 				mainVBox.setBackground(new Background(new BackgroundFill(dungeonColor2, CornerRadii.EMPTY, Insets.EMPTY)));
 				mainVBox.getChildren().addAll(menuBarTown,dungeonVBox);
 				break;
 			case "gameover":
-				mainVBox.setSpacing(0.0);
 				mainVBox.getChildren().addAll(new ImageView(new Image("/images/game over.png")), btnGO);
 				break;
 		}
@@ -734,12 +726,19 @@ public class DataMiners extends Application {
 		switch (currentTown) {
 			case "ugpu":
 				if (quest1complete == false){
-					gpQ.add(new Label("Descend Below - Grandma Calculator:\n\tThey say below the town there is a virus that has taken root of\nthe old storages down there.\n\nI guess what I am asking is easy to follow, but could\nyou be a dearie and slay that nasty and mean Viral Officer?\n\n(Defeat one Viral Officer in the TrashBin Dungeon)"),0,1);
+					Text taQuest = new Text("Descend Below - Grandma Calculator:\n\tThey say below the town there is a virus that has taken root of\nthe old storages down there.\n\nI guess what I am asking is easy to follow, but could\nyou be a dearie and slay that nasty and mean Viral Officer?\n\n(Defeat one Viral Officer in the TrashBin Dungeon)");
+					
+					if (cQuest=="Descend Below"){
+						taQuest.setText("This quest is currently in progress!");
+					}
+					
+					gpQ.add(taQuest,0,1);
 					
 					btnAcceptQuest.setOnAction(e -> {
 						cQuest = "Descend Below";
 						cQuestInfo = "Below the town, in the TrashBin Dungeon, a Viral Officer has set up camp!";
 						questLog.setText(cQuest + "\n" + cQuestInfo);
+						taQuest.setText("This quest is currently in progress!");
 					});
 					
 					gpQ.add(btnAcceptQuest,0,2);
@@ -1457,7 +1456,7 @@ public class DataMiners extends Application {
 	
 	public String townInfo(String townName){
 		if (townName.equals("ugpu")){
-			return "This town is known for their exports of graphic tiles. \nThey are very friendly once you get to know them. \nThey are the least of the towns affected by the virus.";
+			return "This town is known for their exports of graphic tiles. \nThey are very friendly once you get to know them, \n and they are the least affected by the virus of the towns\non your computer.";
 		}
 		else if (townName.equals("harddriveton")){
 			return "HardDriveTon is most known for their hording. \nThey collect everything you can find and then some. \nIf you want somemthing, you will to do some begging and bargining for it.";
@@ -1739,5 +1738,3 @@ public class DataMiners extends Application {
 		}
 	}
 }
-
-
