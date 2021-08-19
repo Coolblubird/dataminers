@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.geometry.*;
 import javafx.scene.image.*;
 import java.util.*;
+import java.security.cert.*;
 
 interface Battler{
 	void statsUp(int a, int b);
@@ -22,6 +23,9 @@ class PartyMember implements Battler{
 	String atk1;
 	String atk2;
 	String atk3;
+	int rAtk;
+	int rDef;
+	int rExplr;
 	int atk;
 	int def;
 	int mhp;
@@ -35,8 +39,11 @@ class PartyMember implements Battler{
 	PartyMember(String newName, int newAtk, int newDef, int newExplr, int newMhp, String newATK1, String newATK2, String newATK3){
 		this.name = newName;
 		this.fileName = newName.toLowerCase().trim();
+		this.rAtk = newAtk;
 		this.atk = newAtk;
+		this.rDef = newDef;
 		this.def = newDef;
+		this.rExplr = newExplr;
 		this.explr = newExplr;
 		this.mhp = newMhp;
 		this.chp = newMhp;
@@ -117,7 +124,7 @@ class PartyMember implements Battler{
 			});
 			
 			gpParty.add(new Label("Which slot would you like to place them?"),0,0);
-			gpParty.add(new Label(pm.name + "\nHP: \t" + pm.chp + "/" + pm.mhp),0,1);
+			gpParty.add(new Label(pm.name + "\nHP: \t\t" + pm.chp + "/" + pm.mhp),0,1);
 			gpParty.add(new Label("ATK: \t" + pm.atk),0,2);
 			gpParty.add(new Label("DEF: \t" + pm.def),0,3);
 			gpParty.add(new Label("Explr: \t" + pm.explr),0,4);
@@ -130,10 +137,12 @@ class PartyMember implements Battler{
 			gpParty.add(btnP4,0,8);
 			gpParty.add(new Label(DataMiners.pTable[3].name),1,8);
 			
+			gpParty.add(new Label("Note: You may have to refresh their party slot."),0,9);
+			
 			gpParty.setPadding(new Insets(10, 10, 10, 10));
 			gpParty.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
 			
-			Scene sceneP = new Scene(gpParty,320,320);
+			Scene sceneP = new Scene(gpParty,360,320);
 
 			changePartyWindow.setTitle("Place them where?");
 			changePartyWindow.setResizable(false);
@@ -173,6 +182,17 @@ class PartyMember implements Battler{
 		
 	Image getOW(){
 		return this.overWorldSpr;
+	}
+	
+	boolean isStageShowing(){
+		return pWindow.isShowing();
+	}
+	
+	void restoreStats(){
+		this.chp=this.mhp;
+		this.atk = this.rAtk;
+		this.def = this.rDef;
+		this.explr = this.rExplr;
 	}
 }
 

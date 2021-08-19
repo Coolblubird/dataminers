@@ -32,14 +32,14 @@ import java.util.*;
 		-COMBAT INTERACTION
 		-DUNGEONS
 			-SPRITES (3/10) (done for the demo)
-			-EVENTS 
-			-MAP INTERACTION 
+			-EVENTS (DONE)
+			-MAP INTERACTION (DONE)
 	-COMBAT:
 		-SPRITES FOR ENEMIES (DONE)
 		-SPRITES FOR CHARACTERS (9/20) --Kook is making one, hound him.
 		-ITEM FUNCIONALITY (DONE)
 		-TEXT FOR HOW COMBAT IS GOING (DONE)
-		-ABILITY INTERACTION (
+		-ABILITY INTERACTION (DONE)
 	-STORY: (KINDA DONE)
 		-YEAH YOU SHOULD PROBABLY WRITE THAT LMAO (OK KINDA DONE)
 	-OTHER TAB:
@@ -81,10 +81,10 @@ public class DataMiners extends Application {
 	Enemy viralOfficer = new Enemy("ViralOfficer",12,4,15);
 	Enemy hauntedCode = new Enemy("HauntedCode",9,1,12);
 	Enemy navyWindCO = new Enemy("NavyWindCO",6,3,13);
-	Enemy blargo = new Enemy("Blargo",6,3,13);
-	Enemy firewall = new Enemy("FireWall",6,3,13);
-	Enemy bandit = new Enemy("Bandit",6,3,13);
-	Enemy browserGremlin = new Enemy("BrowserGremlin",6,3,13);
+	Enemy blargo = new Enemy("Blargo",7,10,20);
+	Enemy firewall = new Enemy("FireWall",12,6,17);
+	Enemy bandit = new Enemy("Bandit",10,8,20);
+	Enemy browserGremlin = new Enemy("BrowserGremlin",15,8,15);
 	Enemy glitchedOfficer = new Enemy("GlitchedOfficer",6,3,13);
 	Enemy glitchKnight = new Enemy("GlitchKnight",6,3,13);
 	Enemy glitchtopus = new Enemy("Glitchtopus",6,3,13);
@@ -109,7 +109,6 @@ public class DataMiners extends Application {
 	String cTownName = "UGPU";
 	static String cQuest = "N/A";
 	String cQuestInfo = "N/A";
-	String cQuestEnemy = "N/A";
 	MenuBar menuBarCombat = new MenuBar();
 	MenuBar menuBarTown = new MenuBar();
 	MenuBar menuBarMap = new MenuBar();
@@ -164,6 +163,10 @@ public class DataMiners extends Application {
 		enemyList.add(hauntedCode);
 		enemyList.add(viralOfficer);
 		enemyList.add(navyWindCO);
+		enemyList.add(blargo);
+		enemyList.add(firewall);
+		enemyList.add(bandit);
+		enemyList.add(browserGremlin);
 		
 		itemsOnPerson.add(new Item("HealingPotion",false,0,10));
 		
@@ -260,13 +263,20 @@ public class DataMiners extends Application {
 		
 		Pane mapPane = new Pane();
 		mapPane.setPrefSize(700,670);
-		//locations
+		
+		//locations init
 		ImageView ugpuMap = new ImageView(new Image("/images/locations/map/ugpu.PNG"));
 		ugpuMap.relocate(8,64);
-		ImageView trashBinMap = new ImageView(new Image("/images/locations/map/trashbin.PNG"));
-		trashBinMap.relocate(8,100);
 		ImageView hardDriveMap = new ImageView(new Image("/images/locations/map/harddriveton.PNG"));
 		hardDriveMap.relocate(8,236);
+		ImageView newBoardCityMap = new ImageView(new Image("/images/locations/map/newboardcity.PNG"));
+		newBoardCityMap.relocate(300,64);
+		ImageView ramopolisMap = new ImageView(new Image("/images/locations/map/ramopolis.PNG"));
+		ramopolisMap.relocate(620,580);
+		
+		//dungeons init
+		ImageView trashBinMap = new ImageView(new Image("/images/locations/map/trashbin.PNG"));
+		trashBinMap.relocate(8,100);
 		
 		//plr on map
 		ImageView plrMap = new ImageView(new Image("/images/partyMembers/" + caulder.fileName + "/map.PNG"));
@@ -289,16 +299,15 @@ public class DataMiners extends Application {
 		//towns
 		ugpuMap.setOnMouseClicked(e -> {
 			cTownName="UGPU";
-			eventLog.setText(eventLog.getText() + "\n-Arrived in United Graphics Processing Corporation");
+			eventLog.setText("\n-Arrived in United Graphics Processing Corporation" + eventLog.getText());
 			cTown="ugpu";
 			mode="town";
 			modeMachine();
 		});
 		
-		
 		hardDriveMap.setOnMouseClicked(e -> {
 			cTownName="HardDriveton";
-			eventLog.setText(eventLog.getText() + "\n-Arrived in HardDriveton");
+			eventLog.setText("\n-Arrived in HardDriveton" + eventLog.getText());
 			cTown="harddriveton";
 			mode="town";
 			modeMachine();
@@ -308,18 +317,18 @@ public class DataMiners extends Application {
 		trashBinMap.setOnMouseClicked(e -> {
 			cTown="trashbin";
 			cTownName="The Trash Bin";
-			eventLog.setText(eventLog.getText() + "\n-Arrived in the TrashBin dungeon!");
+			eventLog.setText("\n-Arrived in the TrashBin dungeon!" + eventLog.getText());
 			mode="dungeon";
 			modeMachine();
 		});
 		
-		mapPane.getChildren().addAll(ugpuMap,trashBinMap,hardDriveMap,plrMap);
+		mapPane.getChildren().addAll(ugpuMap,trashBinMap,hardDriveMap,newBoardCityMap,ramopolisMap,plrMap);
 		mapSP.getChildren().addAll(mapBack,mapPane);
 		
 		
 		//-------------------EXTRAS TAB---------------
 		//extras tab and about tab
-		eventLog.setText(eventLog.getText() + "\n-Booted the program.");
+		eventLog.setText("\n-Booted the program." + eventLog.getText());
 		eventLog.setEditable(false);
 		eventLog.setStyle("-fx-opacity: 1;");
 		questLog.setEditable(false);
@@ -484,7 +493,7 @@ public class DataMiners extends Application {
 				
 				currentTurn=0;
 				
-				combatLog = new TextArea("Initallized Combat!\nIt is now " + pTable[0].name + "'s Turn!");
+				combatLog = new TextArea("It is now " + pTable[0].name + "'s Turn!\nInitallized Combat!");
 				combatLog.setEditable(false);
 				combatLog.setPrefColumnCount(25);
 				combatLog.setStyle("-fx-opacity: 1; -fx-font-size: 1.5em;");
@@ -522,6 +531,15 @@ public class DataMiners extends Application {
 				town.add(btnMap,1,4);
 				town.setVgap(4);
 				town.setHgap(4);
+				
+				if (charUnlocked.contains(co)){
+					for (int i=0; i<=3; i++) {
+						pTable[i].restoreStats();
+						if (pTable[i].isStageShowing()) {
+							partyWindow(pTable[i], i);
+						}
+					}
+				}
 				
 				mainVBox.setSpacing(0.0);
 				menuBarTown.getMenus().removeAll(menuParty,menuItems,menuOther,menuAbout);
@@ -616,7 +634,7 @@ public class DataMiners extends Application {
 				
 				picForDungeon = new ImageView(new Image("/images/locations/" + cTown + ".png"));
 				
-				dungeonVBox.getChildren().addAll(picForDungeon, dungeonName3, new Text("Fantastic job!"), new Text("Your reward is a" + reward.name + ".\nIt increases your " + stat + " by " + reward.statAmount + "."),btnMap);
+				dungeonVBox.getChildren().addAll(picForDungeon, dungeonName3, new Text("Fantastic job!"), new Text("Your reward is a(n) " + reward.name + ".\nIt increases your " + stat + " by " + reward.statAmount + "."),btnMap);
 				itemsOnPerson.add(reward);
 				dungeonVBox.setAlignment(Pos.CENTER);
 				dungeonVBox.setSpacing(10.0);
@@ -647,6 +665,13 @@ public class DataMiners extends Application {
 				break;
 			case 2:
 				combat(4, 1, 2);
+				break;
+			case 3:
+				combat(1, 5, 1);
+				break;
+			case 4:
+				combat(2, 3, 6);
+				break;
 		}
 	}
 	
@@ -686,9 +711,20 @@ public class DataMiners extends Application {
 				advanceText();
 				modeMachine();
 				break;
+			case "harddriveton":
+				if (!charUnlocked.contains(antt)){
+					textIntro=46;
+				}
+				else {
+					textIntro=44;
+				}
+				mode="visit";
+				advanceText();
+				modeMachine();
+				break;
 		}
 		
-		eventLog.setText(eventLog.getText() + "\n-Visited " + cTownName + "'s Center.");
+		eventLog.setText("\n-Visited " + cTownName + "'s Center." + eventLog.getText());
 	}
 	
 	void quest(String currentTown){
@@ -703,7 +739,6 @@ public class DataMiners extends Application {
 					btnAcceptQuest.setOnAction(e -> {
 						cQuest = "Descend Below";
 						cQuestInfo = "Below the town, in the TrashBin Dungeon, a Viral Officer has set up camp!";
-						cQuestEnemy = "viralofficer";
 						questLog.setText(cQuest + "\n" + cQuestInfo);
 					});
 					
@@ -716,6 +751,9 @@ public class DataMiners extends Application {
 					else {
 						gpQ.add(new Label("Descend Below - Grandma Calculator:\n\tThank you so much!\nNow that mean old Viral Officer will be on his way!\nHere, it isn't much, but take this.'"),0,1);
 						quest1reward = true;
+						cQuest = "";
+						cQuestInfo = "";
+						questLog.setText("N/A\nN/A");
 						itemsOnPerson.add(new Item("GrannysNumberSoup", false, 0, 30));
 					}
 				}
@@ -730,7 +768,7 @@ public class DataMiners extends Application {
 		newWindow.setResizable(false);
 		newWindow.setScene(sceneQ);
 		newWindow.show();
-		eventLog.setText(eventLog.getText() + "\n-Visited " + cTownName + "'s Quest Board.");
+		eventLog.setText("\n-Visited " + cTownName + "'s Quest Board." + eventLog.getText());
 	}
 	
 	void shop(String currentTown){
@@ -954,9 +992,9 @@ public class DataMiners extends Application {
 				charUnlocked.add(co);
 				charUnlocked.add(mars);
 				charUnlocked.add(ascii);
-				eventLog.setText(eventLog.getText() + "\n-" + co.name + " joined against the virus!");
-				eventLog.setText(eventLog.getText() + "\n-" + mars.name + " joined against the virus!");
-				eventLog.setText(eventLog.getText() + "\n-" + ascii.name + " joined against the virus!");
+				eventLog.setText("\n-" + co.name + " joined against the virus!" + eventLog.getText());
+				eventLog.setText("\n-" + mars.name + " joined against the virus!" + eventLog.getText());
+				eventLog.setText("\n-" + ascii.name + " joined against the virus!" + eventLog.getText());
 				visitGPUFirst=true;
 				mode="town";
 				break;
@@ -998,7 +1036,7 @@ public class DataMiners extends Application {
 				break;
 			case 44:
 				charUnlocked.add(kyzu);
-				eventLog.setText(eventLog.getText() + "\n-" + kyzu.name + " joined against the virus!");
+				eventLog.setText("\n-" + kyzu.name + " joined against the virus!" + eventLog.getText());
 				mode="town";
 				break;
 			case 45:
@@ -1008,6 +1046,35 @@ public class DataMiners extends Application {
 				picForCutscene = new ImageView(new Image("/images/cutscenes/black.png"));
 				break;
 			case 46:
+				mode="town";
+				break;
+			case 47:
+				textForCutscene1.setText("Yee!");
+				textForCutscene2.setText("Stay Away!");
+				textForCutscene3.setText("I'm just a computer bug!");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/visit-3.png"));
+				break;
+			case 48:
+				textForCutscene1.setText("Huh?");
+				textForCutscene2.setText("Aww look at you!");
+				textForCutscene3.setText("You're pretty cute!");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/visit-4.png"));
+				break;
+			case 49:
+				textForCutscene1.setText("Would you like to come with me?");
+				textForCutscene2.setText("We are killing that nasty virus down");
+				textForCutscene3.setText("in the Ramopolis area!");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/visit-4.png"));
+				break;
+			case 50:
+				textForCutscene1.setText("Ooo~");
+				textForCutscene2.setText("I would love to!");
+				textForCutscene3.setText("I'm a lot stronger than I look!");
+				picForCutscene = new ImageView(new Image("/images/cutscenes/visit-3.png"));
+				break;
+			case 51:
+				charUnlocked.add(antt);
+				eventLog.setText("\n-" + antt.name + " joined against the virus!" + eventLog.getText());
 				mode="town";
 				break;
 		}
@@ -1066,8 +1133,7 @@ public class DataMiners extends Application {
 					p.pWindow.setWidth(p.pWindow.getWidth() + 0.001);
 				}
 				else {
-					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
-					combatLog.setScrollTop(Double.MAX_VALUE);
+					combatLog.setText("\nIt is not your turn, please wait." + combatLog.getText());
 				}
 			}
 		});
@@ -1082,8 +1148,7 @@ public class DataMiners extends Application {
 					p.pWindow.setWidth(p.pWindow.getWidth() + 0.001);
 				}
 				else {
-					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
-					combatLog.setScrollTop(Double.MAX_VALUE);
+					combatLog.setText("\nIt is not your turn, please wait." + combatLog.getText());
 				}
 			}
 		});
@@ -1098,8 +1163,7 @@ public class DataMiners extends Application {
 					p.pWindow.setWidth(p.pWindow.getWidth() + 0.001);
 				}
 				else {
-					combatLog.setText(combatLog.getText() + "\nIt is not your turn, please wait.");
-					combatLog.setScrollTop(Double.MAX_VALUE);
+					combatLog.setText("\nIt is not your turn, please wait." + combatLog.getText());
 				}
 			}
 		});
@@ -1279,11 +1343,10 @@ public class DataMiners extends Application {
 				if (tempAtk<0)
 					tempAtk=0;
 				
-				combatLog.appendText("\n" + pTable[currentTurn].name + " Dealt " + tempAtk + " damage to " + eCombatTable[target].name + "!");
+				combatLog.setText(pTable[currentTurn].name + " Dealt " + tempAtk + " damage to " + eCombatTable[target].name + "!\n" + combatLog.getText());
 				eCombatTable[target].statsDown(0, pTable[currentTurn].atk);
 				if (eCombatTable[target].isKO()){
-					combatLog.appendText("\n" + eCombatTable[target].name + " was knocked out!");
-					combatLog.setScrollTop(Double.MAX_VALUE);
+					combatLog.setText(eCombatTable[target].name + " was knocked out!\n" + combatLog.getText());
 					switch (target) {
 						case 0:
 							cEnemyPic1.setVisible(false);
@@ -1298,18 +1361,16 @@ public class DataMiners extends Application {
 				}
 				break;
 			case 1:
-				combatLog.appendText("\n" + pTable[currentTurn].name + " healed " + pTable[currentTurn].explr + " damage to " + pTable[target].name + "!");
-				combatLog.setScrollTop(Double.MAX_VALUE);
+				combatLog.setText(pTable[currentTurn].name + " healed " + pTable[currentTurn].explr + " damage to " + pTable[target].name + "!\n" + combatLog.getText());
 				pTable[target].statsUp(0, pTable[currentTurn].explr);
 				
 				partyWindow(pTable[target], target);
 				break;
 			case 2:
-				combatLog.appendText("\n" + pTable[currentTurn].name + " Dealt " + pTable[currentTurn].atk + " damage to " + eCombatTable[target].name + "!");
+				combatLog.setText(pTable[currentTurn].name + " Dealt " + pTable[currentTurn].atk + " damage to " + eCombatTable[target].name + "!\n" + combatLog.getText());
 				eCombatTable[target].statsDown(0, pTable[currentTurn].atk);
 				if (eCombatTable[target].isKO()){
-					combatLog.appendText("\n" + eCombatTable[target].name + " was knocked out!");
-					combatLog.setScrollTop(Double.MAX_VALUE);
+					combatLog.setText(eCombatTable[target].name + " was knocked out!\n" + combatLog.getText());
 					switch (target) {
 						case 0:
 							cEnemyPic1.setVisible(false);
@@ -1335,11 +1396,10 @@ public class DataMiners extends Application {
 				if (tempAtk<0)
 					tempAtk=0;
 				
-				combatLog.setText(combatLog.getText() + "\n" + eCombatTable[currentTurn].name + " Dealt " + tempAtk + " to " + pTable[variable].name + "!");
+				combatLog.setText(eCombatTable[currentTurn].name + " Dealt " + tempAtk + " to " + pTable[variable].name + "!\n" +combatLog.getText());
 				
 				if (pTable[variable].isKO()){
-					combatLog.setText(combatLog.getText() + "\n" + pTable[variable].name + " was knocked out!");
-					combatLog.setScrollTop(Double.MAX_VALUE);
+					combatLog.setText(pTable[variable].name + " was knocked out!\n"+combatLog.getText());
 				}
 				
 				partyWindow(pTable[variable], variable);
@@ -1348,8 +1408,7 @@ public class DataMiners extends Application {
 			currentTurn++;
 			
 			while (pTable[currentTurn].isKO()){
-				combatLog.setText(combatLog.getText() + "\n" + pTable[currentTurn].name + " is still knocked out!");
-				combatLog.setScrollTop(Double.MAX_VALUE);
+				combatLog.setText(pTable[currentTurn].name + " is still knocked out!\n" + combatLog.getText());
 
 				if (currentTurn==3)
 					currentTurn=0;
@@ -1363,11 +1422,10 @@ public class DataMiners extends Application {
 					if (tempAtk<0)
 						tempAtk=0;
 					
-					combatLog.setText(combatLog.getText() + "\n" + eCombatTable[currentTurn].name + " Dealt " + tempAtk + " to " + pTable[variable].name + "!");
+					combatLog.setText(eCombatTable[currentTurn].name + " Dealt " + tempAtk + " to " + pTable[variable].name + "!\n" + combatLog.getText());
 					
 					if (pTable[variable].isKO()){
-						combatLog.setText(combatLog.getText() + "\n" + pTable[variable].name + " was knocked out!");
-						combatLog.setScrollTop(Double.MAX_VALUE);
+						combatLog.setText(pTable[variable].name + " was knocked out!\n" + combatLog.getText());
 					}
 					
 					partyWindow(pTable[variable], variable);
@@ -1375,15 +1433,14 @@ public class DataMiners extends Application {
 				currentTurn++;
 			}
 			
-			combatLog.setText(combatLog.getText() + "\nIt is now " + pTable[currentTurn].name + "'s Turn!");
-			combatLog.setScrollTop(Double.MAX_VALUE);
+			combatLog.setText("It is now " + pTable[currentTurn].name + "'s Turn!\n" + combatLog.getText());
 		}
 		else{
 			currentTurn=0;
 			
-			combatLog.setText(combatLog.getText() + "\nIt is now " + pTable[currentTurn].name + "'s Turn!");
-			combatLog.setScrollTop(Double.MAX_VALUE);
+			combatLog.setText("It is now " + pTable[currentTurn].name + "'s Turn!\n" + combatLog.getText());
 		}
+		
 		
 		//if the party won or not
 		if (eCombatTable[0].isKO() && eCombatTable[1].isKO() && eCombatTable[2].isKO()) {
@@ -1412,7 +1469,6 @@ public class DataMiners extends Application {
 	}
 	
 	String getBack(){
-		System.out.println(tempMode);
 		if (tempMode=="map"){
 			return "/images/battlebacks/map.png";
 		}
@@ -1570,10 +1626,12 @@ public class DataMiners extends Application {
 				*/
 				switch(DataMiners.cQuest){
 					case "Descend Below":
-						combat(3, 3, 3);
+						combat(2, 3, 1);
 						DataMiners.quest1complete = true;
 						tempMode="dungeonReward";
 						break;
+					default:
+						mode="dungeonReward";
 				}
 			}
 		}

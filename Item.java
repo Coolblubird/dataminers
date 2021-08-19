@@ -69,7 +69,7 @@ public class Item {
 			gpItem.setPadding(new Insets(10, 10, 10, 10));
 			gpItem.setBackground(new Background(new BackgroundFill(Color.LEMONCHIFFON, CornerRadii.EMPTY, Insets.EMPTY)));
 			
-			Scene sceneI = new Scene(gpItem,320,150);
+			Scene sceneI = new Scene(gpItem,400,150);
 			
 			itemWindow.setOnCloseRequest(e -> e.consume());
 
