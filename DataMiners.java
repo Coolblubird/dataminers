@@ -1202,9 +1202,9 @@ public class DataMiners extends Application {
 		ta1.setStyle("-fx-opacity: 1;");
 		Tab howToPlayTab = new Tab("Manual",ta1);
 		Tab questTab = new Tab("Current Quest",questLog);
-		Tab settingsTab = new Tab("Settings");
+		//Tab settingsTab = new Tab("Settings");
 		Tab recentTalkTab = new Tab("Recent Text",eventLog);
-		TabPane tb = new TabPane(questTab,recentTalkTab,howToPlayTab,settingsTab);
+		TabPane tb = new TabPane(questTab,recentTalkTab,howToPlayTab);
 		
 		tb.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 		tb.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE, CornerRadii.EMPTY, Insets.EMPTY)));
