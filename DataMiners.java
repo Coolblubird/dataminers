@@ -779,7 +779,7 @@ public class DataMiners extends Application {
 		switch (textIntro) {
 			case 1:
 				textForCutscene1.setText("The important part is...");
-				textForCutscene2.setText("that if this is the inside of your computer,");
+				textForCutscene2.setText("that if this is the outside of your computer,");
 				textForCutscene3.setText("");
 				break;
 			case 2:
@@ -1177,7 +1177,7 @@ public class DataMiners extends Application {
 		gp2.add(pFacePlate,0,0);
 		gp2.add(bA1,1,2);
 		gp2.add(bA2,1,3);
-		gp2.add(bA3,1,4);
+		//gp2.add(bA3,1,4);
 		gp2.add(t1,0,1);
 		gp2.add(t2,0,2);
 		gp2.add(t3,0,3);
