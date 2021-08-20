@@ -71,7 +71,7 @@ public class DataMiners extends Application {
 	PartyMember steve = new PartyMember("Steve", 18, 2, 10, 10, "Wrench Bash", "Repair", "Tinker");
 	PartyMember stockholm = new PartyMember("Stockholm", 15, 2, 10, 10, "Tennis", "White Bread", "Subway");
 	PartyMember gatorboy = new PartyMember("GatorBoy", 15, 2, 10, 10, "Hyuk!", "Yah!", "Eep!");
-	PartyMember professorMoney = new PartyMember("ProfessorMoney", 15, 2, 10, 10, "Coin Gun", "Cash Flow", "Bribe");
+	PartyMember professorMoney = new PartyMember("ProfessorMoney", 20, 10, 4, 20, "Coin Gun", "Cash Flow", "Bribe");
 	
 	//enemies, name, atk, def, hp
 	static ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
@@ -85,6 +85,7 @@ public class DataMiners extends Application {
 	Enemy firewall = new Enemy("FireWall",12,6,17);
 	Enemy bandit = new Enemy("Bandit",10,8,20);
 	Enemy browserGremlin = new Enemy("BrowserGremlin",15,8,15);
+	Enemy cryptoMiner = new Enemy("CryptoMiner",9,6,20);
 	Enemy glitchedOfficer = new Enemy("GlitchedOfficer",6,3,13);
 	Enemy glitchKnight = new Enemy("GlitchKnight",6,3,13);
 	Enemy glitchtopus = new Enemy("Glitchtopus",6,3,13);
@@ -146,6 +147,8 @@ public class DataMiners extends Application {
 	boolean visitGPUFirst = false;
 	static boolean quest1complete = false;
 	static boolean quest1reward = false;
+	static boolean quest2complete = false;
+	static boolean quest2reward = false;
 	boolean shopUnlocked = false;
 	static boolean inCombat = false;
 	static boolean inDungeon = false;
@@ -167,6 +170,7 @@ public class DataMiners extends Application {
 		enemyList.add(firewall);
 		enemyList.add(bandit);
 		enemyList.add(browserGremlin);
+		enemyList.add(cryptoMiner);
 		
 		itemsOnPerson.add(new Item("HealingPotion",false,0,10));
 		
@@ -636,7 +640,7 @@ public class DataMiners extends Application {
 			case "dungeonReward":
 				dungeonVBox.getChildren().clear();
 				
-				Text dungeonName3 = new Text(cTownName);
+				Text dungeonName3 = new Text(cTownName + "'s Rewards:");
 				dungeonName3.setFont(new Font(20.0));
 				
 				Color dungeonColor2 = Color.GOLD;
@@ -646,6 +650,9 @@ public class DataMiners extends Application {
 				switch (cTown) {
 					case "trashbin":
 						reward = new Item("OldTextDocument", false, 2, 5);
+						if (cQuest.equals("Dig Through Trash")){
+							reward = new Item("CryptoMiner", true, 0, 0);
+						}
 						break;
 				}
 				
@@ -660,9 +667,15 @@ public class DataMiners extends Application {
 						break;
 				}
 				
-				picForDungeon = new ImageView(new Image("/images/locations/" + cTown + ".png"));
+				picForDungeon = new ImageView(reward.itemSpr);
 				
-				dungeonVBox.getChildren().addAll(picForDungeon, dungeonName3, new Text("Fantastic job!"), new Text("Your reward is a(n) " + reward.name + ".\nIt increases your " + stat + " by " + reward.statAmount + "."),btnMap);
+				Text rewardText = new Text("Your reward is a(n) " + reward.name + ".\nIt increases your " + stat + " by " + reward.statAmount + ".");
+				
+				if (reward.name.equals("CryptoMiner")){
+					rewardText.setText("Your reward is a CrytoMiner.\nIt's a key Item!");
+				}
+				
+				dungeonVBox.getChildren().addAll(dungeonName3, picForDungeon, new Text("Fantastic job!"), rewardText,btnMap);
 				itemsOnPerson.add(reward);
 				dungeonVBox.setAlignment(Pos.CENTER);
 				dungeonVBox.setSpacing(10.0);
@@ -793,7 +806,7 @@ public class DataMiners extends Application {
 				break;
 			case "harddriveton":
 				if (quest2complete == false){
-					Text taQuest = new Text("Dig Through Trash - Professor Money:\n\tYou never talked to me, ok?\n\n\tI am an operative who mines Crytocurrency down in the depths below UGPU.\n\n\tOne of my CryptoMiners has escaped. I need you to bring them back to me.\n\n\t(Find a CryptoMiner in the TrashBin Dungeon)");
+					Text taQuest = new Text("Dig Through Trash - Professor Money:\n\tYou never talked to me, ok?\n\n\tI am an operative who mines Crytocurrency down in the depths below \n\n\tUGPU. One of my CryptoMiners has escaped. I need you to bring them \n\tback to me.\n\n\t(Find a CryptoMiner in the TrashBin Dungeon)");
 					
 					if (cQuest=="Dig Through Trash"){
 						taQuest.setText("This quest is currently in progress!");
@@ -811,16 +824,16 @@ public class DataMiners extends Application {
 					gpQ.add(btnAcceptQuest,0,2);
 				}
 				else{
-					if (quest1reward == true){
+					if (quest2reward == true){
 						gpQ.add(new Label("No Quest Availble:\n\tSorry, but you have already completed the quest here."),0,1);
 					}
 					else {
-						gpQ.add(new Label("Descend Below - Grandma Calculator:\n\tThank you so much!\nNow that mean old Viral Officer will be on his way!\nHere, it isn't much, but take this.'"),0,1);
-						quest1reward = true;
+						gpQ.add(new Label("Dig Through Trash - Professor Money:\n\tThank you.\n\tNow I can freely assist you in your fight against that virus.\n\tLet me tag along.\n\n\t(Professor Money join the fight against the virus!)"),0,1);
+						quest2reward = true;
 						cQuest = "";
 						cQuestInfo = "";
 						questLog.setText("N/A\nN/A");
-						itemsOnPerson.add(new Item("GrannysNumberSoup", false, 0, 30));
+						charUnlocked.add(professorMoney);
 					}
 				}
 				break;
@@ -1379,15 +1392,20 @@ public class DataMiners extends Application {
 		});
 		
 		gpChoose.add(new Label("Who will you Target?"),0,0);
-		gpChoose.add(btnP1,0,1);
-		if (!btnP2.getText().equals("blank"))
-			gpChoose.add(btnP2,0,2);
+		if (attackMode==0){
+			if (!btnP1.getText().equals("blank") && eCombatTable[0].isKO()==false)
+				gpChoose.add(btnP1,0,1);
+				
+			if (!btnP2.getText().equals("blank") && eCombatTable[1].isKO()==false)
+				gpChoose.add(btnP2,0,2);
 			
-		
-		if (!btnP3.getText().equals("blank"))
+			if (!btnP3.getText().equals("blank") && eCombatTable[2].isKO()==false)
+				gpChoose.add(btnP3,0,3);
+		}
+		else{
+			gpChoose.add(btnP1,0,1);
+			gpChoose.add(btnP2,0,2);
 			gpChoose.add(btnP3,0,3);
-		
-		if (attackMode==1) {
 			gpChoose.add(btnP4,0,4);
 		}
 		
@@ -1800,6 +1818,11 @@ public class DataMiners extends Application {
 					case "Descend Below":
 						combat(2, 3, 1);
 						DataMiners.quest1complete = true;
+						tempMode="dungeonReward";
+						break;
+					case "Dig Through Trash":
+						combat(0, 9, 0);
+						DataMiners.quest2complete = true;
 						tempMode="dungeonReward";
 						break;
 					default:
