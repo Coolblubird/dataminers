@@ -307,17 +307,46 @@ public class DataMiners extends Application {
 		
 		hardDriveMap.setOnMouseClicked(e -> {
 			cTownName="HardDriveton";
-			eventLog.setText("\n-Arrived in HardDriveton" + eventLog.getText());
+			eventLog.setText("-Arrived in HardDriveton\n" + eventLog.getText());
 			cTown="harddriveton";
 			mode="town";
 			modeMachine();
+		});
+		
+		newBoardCityMap.setOnMouseClicked(e -> {
+			cTownName="NewBoardCity";
+			eventLog.setText("-Arrived in NewBoardCity\n" + eventLog.getText());
+			cTown="newboardcity";
+			mode="town";
+			modeMachine();
+		});
+		
+		ramopolisMap.setOnMouseClicked(e -> {
+			VBox vItem = new VBox();
+			Label errorLabel = new Label("No availble in the demo, sorry!");
+			Button btnMyBad = new Button("My bad.");
+			Stage errorWindow = new Stage();
+			
+			btnMyBad.setOnAction(p -> {
+				errorWindow.close();
+			});
+			
+			vItem.getChildren().addAll(errorLabel,btnMyBad);
+			vItem.setAlignment(Pos.TOP_CENTER);
+			
+			Scene sceneI = new Scene(vItem,250,60);
+			errorWindow.setTitle("Not for Demo");
+			errorWindow.setResizable(false);
+			errorWindow.setAlwaysOnTop(true);
+			errorWindow.setScene(sceneI);
+			errorWindow.show();
 		});
 		
 		//dungeons
 		trashBinMap.setOnMouseClicked(e -> {
 			cTown="trashbin";
 			cTownName="The Trash Bin";
-			eventLog.setText("\n-Arrived in the TrashBin dungeon!" + eventLog.getText());
+			eventLog.setText("-Arrived in the TrashBin dungeon!\n" + eventLog.getText());
 			mode="dungeon";
 			modeMachine();
 		});
@@ -543,7 +572,12 @@ public class DataMiners extends Application {
 				menuBarTown.getMenus().removeAll(menuParty,menuItems,menuOther,menuAbout);
 				menuBarTown.getMenus().addAll(menuParty,menuItems,menuOther,menuAbout);
 				mainVBox.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
-				mainVBox.getChildren().addAll(menuBarTown,town);
+				if (visitGPUFirst){
+					mainVBox.getChildren().addAll(menuBarTown,town);
+				}
+				else{
+					mainVBox.getChildren().addAll(menuBarTown, new Text("Check the Others Tab for a Manual on how to play!"),town);
+				}
 				break;
 			case "visit":
 				mainVBox.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -756,6 +790,40 @@ public class DataMiners extends Application {
 						itemsOnPerson.add(new Item("GrannysNumberSoup", false, 0, 30));
 					}
 				}
+				break;
+			case "harddriveton":
+				if (quest2complete == false){
+					Text taQuest = new Text("Dig Through Trash - Professor Money:\n\tYou never talked to me, ok?\n\n\tI am an operative who mines Crytocurrency down in the depths below UGPU.\n\n\tOne of my CryptoMiners has escaped. I need you to bring them back to me.\n\n\t(Find a CryptoMiner in the TrashBin Dungeon)");
+					
+					if (cQuest=="Dig Through Trash"){
+						taQuest.setText("This quest is currently in progress!");
+					}
+					
+					gpQ.add(taQuest,0,1);
+					
+					btnAcceptQuest.setOnAction(e -> {
+						cQuest = "Dig Through Trash";
+						cQuestInfo = "In the TrashBin Dungeon, Professor Money lost his CryptoMiner!";
+						questLog.setText(cQuest + "\n" + cQuestInfo);
+						taQuest.setText("This quest is currently in progress!");
+					});
+					
+					gpQ.add(btnAcceptQuest,0,2);
+				}
+				else{
+					if (quest1reward == true){
+						gpQ.add(new Label("No Quest Availble:\n\tSorry, but you have already completed the quest here."),0,1);
+					}
+					else {
+						gpQ.add(new Label("Descend Below - Grandma Calculator:\n\tThank you so much!\nNow that mean old Viral Officer will be on his way!\nHere, it isn't much, but take this.'"),0,1);
+						quest1reward = true;
+						cQuest = "";
+						cQuestInfo = "";
+						questLog.setText("N/A\nN/A");
+						itemsOnPerson.add(new Item("GrannysNumberSoup", false, 0, 30));
+					}
+				}
+				break;
 		}
 		
 		gpQ.setPadding(new Insets(10, 10, 10, 10));
@@ -1463,6 +1531,9 @@ public class DataMiners extends Application {
 		}
 		else if (townName.equals("trashbin")){
 			return "A dungeon crawling with lower level enemies that have been scrapped. \nMight be something of worth down there.";
+		}
+		else if (townName.equals("newboardcity")){
+			return "This Town was recently build as of this year.\nIt was constructed from the ruins of the prevous town, Board City.\n It's a vast and massive city with people from all over the computer.";
 		}
 		else{
 			return "yeah.";
